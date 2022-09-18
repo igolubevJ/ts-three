@@ -42,9 +42,10 @@ const stats = Stats();
 document.body.appendChild(stats.dom);
 
 const gui = new GUI();
-gui.add(cube.rotation, "x", 0, Math.PI * 2);
-gui.add(cube.rotation, "y", 0, Math.PI * 2);
-gui.add(cube.rotation, "z", 0, Math.PI * 2);
+const cubeFolder = gui.addFolder("Cube");
+cubeFolder.add(cube.rotation, "x", 0, Math.PI * 2);
+cubeFolder.add(cube.rotation, "y", 0, Math.PI * 2);
+cubeFolder.add(cube.rotation, "z", 0, Math.PI * 2);
 
 function animate() {
   requestAnimationFrame(animate);
