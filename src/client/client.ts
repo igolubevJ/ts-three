@@ -91,12 +91,12 @@ materialFolder
     .onChange(() => updateMaterial());
 materialFolder.open();
 
-// const data = {
-//     color: material.color.getHex(),
-// };
+const data = {
+    color: material.color.getHex(),
+};
 
 const meshBasicMaterialFolder = gui.addFolder('THREE.MeshBasicMaterial');
-//meshBasicMaterialFolder.addColor(data, 'color').onChange(() => { material.color.setHex(Number(data.color.toString().replace('#', '0x'))) })
+meshBasicMaterialFolder.addColor(data, 'color').onChange(() => { material.color.setHex(Number(data.color.toString().replace('#', '0x'))) })
 //meshBasicMaterialFolder.add(material, 'wireframe')
 //meshBasicMaterialFolder.add(material, 'wireframeLinewidth', 0, 10)
 //meshBasicMaterialFolder.add(material, 'combine', options.combine).onChange(() => updateMaterial())
