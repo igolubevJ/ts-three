@@ -9,9 +9,9 @@ scene.add(new THREE.AxesHelper(5));
 
 const windowCenter = window.innerWidth / window.innerHeight;
 
-// const light = new THREE.PointLight(0xffffff, 2);
-// light.position.set(2, 2, 2);
-// scene.add(light);
+const light = new THREE.PointLight(0xffffff, 2);
+light.position.set(2, 2, 2);
+scene.add(light);
 
 const camera = new THREE.PerspectiveCamera(75, windowCenter, 0.1, 1000);
 camera.position.z = 3;
