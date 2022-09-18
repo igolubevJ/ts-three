@@ -5,8 +5,13 @@ import { GUI } from 'dat.gui';
 
 const scene = new THREE.Scene();
 scene.add(new THREE.AxesHelper(5));
+// scene.background = new THREE.Color(0xff0000);
 
 const windowCenter = window.innerWidth / window.innerHeight;
+
+const light = new THREE.PointLight(0xffffff, 2);
+light.position.set(2, 2, 2);
+scene.add(light);
 
 const camera = new THREE.PerspectiveCamera(75, windowCenter, 0.1, 1000);
 camera.position.z = 3;
@@ -23,7 +28,14 @@ const icosahedronGeometry = new THREE.IcosahedronGeometry(1, 0);
 const planeGeometry = new THREE.PlaneGeometry();
 const torusKnotGeometry = new THREE.TorusKnotGeometry();
 
-const material = new THREE.MeshNormalMaterial();
+const material = new THREE.MeshLambertMaterial();
+
+// const texture = new THREE.TextureLoader().load("img/grid.png")
+// material.map = texture
+// const envTexture = new THREE.CubeTextureLoader().load(["img/px_50.png", "img/nx_50.png", "img/py_50.png", "img/ny_50.png", "img/pz_50.png", "img/nz_50.png"])
+// envTexture.mapping = THREE.CubeReflectionMapping
+// envTexture.mapping = THREE.CubeRefractionMapping
+// material.envMap = envTexture
 
 const cube = new THREE.Mesh(boxGeometry, material);
 cube.position.x = 5;
@@ -55,47 +67,59 @@ function onWindowResize() {
 
 const stats = Stats();
 document.body.appendChild(stats.dom);
-
 const options = {
-    side: {
-        FrontSide: THREE.FrontSide,
-        BackSide: THREE.BackSide,
-        DoubleSide: THREE.DoubleSide,
-    },
-    combine: {
-        MultiplyOperation: THREE.MultiplyOperation,
-        MixOperation: THREE.MixOperation,
-        AddOperation: THREE.AddOperation,
-    },
+  side: {
+      FrontSide: THREE.FrontSide,
+      BackSide: THREE.BackSide,
+      DoubleSide: THREE.DoubleSide,
+  },
+  combine: {
+      MultiplyOperation: THREE.MultiplyOperation,
+      MixOperation: THREE.MixOperation,
+      AddOperation: THREE.AddOperation,
+  },
 };
 
-const gui = new GUI();
+const gui = new GUI()
 const materialFolder = gui.addFolder('THREE.Material');
 materialFolder.add(material, 'transparent').onChange(() => material.needsUpdate = true);
 materialFolder.add(material, 'opacity', 0, 1, 0.01);
 materialFolder.add(material, 'depthTest');
 materialFolder.add(material, 'depthWrite');
 materialFolder
-    .add(material, 'alphaTest', 0, 1, 0.01)
-    .onChange(() => updateMaterial());
+  .add(material, 'alphaTest', 0, 1, 0.01)
+  .onChange(() => updateMaterial());
 materialFolder.add(material, 'visible');
 materialFolder
-    .add(material, 'side', options.side)
-    .onChange(() => updateMaterial());
-// materialFolder.open();
+  .add(material, 'side', options.side)
+  .onChange(() => updateMaterial());
+materialFolder.open();
 
+const data = {
+  color: material.color.getHex(),
+  //emissive: material.emissive.getHex(),
+};
 
-const meshNormalMaterialFolder = gui.addFolder('THREE.MeshNormalMaterial');
+const meshLambertMaterialFolder = gui.addFolder('THREE.MeshLambertMaterial');
 
-meshNormalMaterialFolder.add(material, 'wireframe');
-meshNormalMaterialFolder
-    .add(material, 'flatShading')
-    .onChange(() => updateMaterial());
-meshNormalMaterialFolder.open();
+meshLambertMaterialFolder.addColor(data, 'color').onChange(() => {
+  material.color.setHex(Number(data.color.toString().replace('#', '0x')));
+});
+//meshLambertMaterialFolder.addColor(data, 'emissive').onChange(() => { material.emissive.setHex(Number(data.emissive.toString().replace('#', '0x'))) });
+meshLambertMaterialFolder.add(material, 'wireframe');
+meshLambertMaterialFolder.add(material, 'wireframeLinewidth', 0, 10);
+//meshLambertMaterialFolder.add(material, 'flatShading').onChange(() => updateMaterial());
+meshLambertMaterialFolder
+  .add(material, 'combine', options.combine)
+  .onChange(() => updateMaterial());
+meshLambertMaterialFolder.add(material, 'reflectivity', 0, 1);
+meshLambertMaterialFolder.add(material, 'refractionRatio', 0, 1);
+meshLambertMaterialFolder.open();
 
 function updateMaterial() {
-    material.side = Number(material.side);
-    material.needsUpdate = true;
+  material.side = Number(material.side)
+  material.combine = Number(material.combine)
+  material.needsUpdate = true
 }
 
 function animate() {
