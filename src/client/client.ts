@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module';
+import { GUI } from 'dat.gui';
 
 const scene = new THREE.Scene();
 
@@ -39,6 +40,9 @@ function onWindowResize() {
 
 const stats = Stats();
 document.body.appendChild(stats.dom);
+
+const gui = new GUI();
+
 function animate() {
   requestAnimationFrame(animate);
 
