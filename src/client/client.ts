@@ -21,10 +21,14 @@ const icosahedronGeometry = new THREE.IcosahedronGeometry(1, 0)
 const planeGeometry = new THREE.PlaneGeometry()
 const torusKnotGeometry = new THREE.TorusKnotGeometry()
 
-const material = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-  wireframe: true
-});
+// const material = new THREE.MeshBasicMaterial({
+//   color: 0x00ff00,
+//   wireframe: true
+// });
+const material = new THREE.MeshBasicMaterial();
+material.needsUpdate = true;
+material.transparent = true;
+material.opacity = 0.25;
 
 const cube = new THREE.Mesh(boxGeometry, material);
 cube.position.x = 5;
