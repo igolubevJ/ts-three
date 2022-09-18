@@ -53,9 +53,9 @@ cubeRotationFolder.add(cube.rotation, "z", 0, Math.PI * 2);
 cubeRotationFolder.open();
 
 const cubePositionFolder = cubeFolder.addFolder("Position");
-cubePositionFolder.add(cube.position, "x", -20, 20);
-cubePositionFolder.add(cube.position, "y", -20, 20);
-cubePositionFolder.add(cube.position, "z", -20, 20);
+cubePositionFolder.add(cube.position, "x", -20, 20, 0.1);
+cubePositionFolder.add(cube.position, "y", -20, 20, 0.1);
+cubePositionFolder.add(cube.position, "z", -20, 20, 0.1);
 cubePositionFolder.open();
 
 const cubeScaleFolder = cubeFolder.addFolder("Scale");
