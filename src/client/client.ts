@@ -27,10 +27,10 @@ const material = new THREE.MeshBasicMaterial(); //{ color: 0x00ff00, wireframe: 
 
 const texture = new THREE.TextureLoader().load("img/grid.png");
 material.map = texture;
-// const envTexture = new THREE.CubeTextureLoader().load(["img/px_50.png", "img/nx_50.png", "img/py_50.png", "img/ny_50.png", "img/pz_50.png", "img/nz_50.png"]);
-// envTexture.mapping = THREE.CubeReflectionMapping;
+const envTexture = new THREE.CubeTextureLoader().load(["img/px_50.png", "img/nx_50.png", "img/py_50.png", "img/ny_50.png", "img/pz_50.png", "img/nz_50.png"]);
+envTexture.mapping = THREE.CubeReflectionMapping;
 // envTexture.mapping = THREE.CubeRefractionMapping;
-// material.envMap = envTexture;
+material.envMap = envTexture;
 
 const cube = new THREE.Mesh(boxGeometry, material);
 cube.position.x = 5;
