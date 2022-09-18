@@ -57,10 +57,30 @@ function onWindowResize() {
 const stats = Stats();
 document.body.appendChild(stats.dom);
 
+const options = {
+  side: {
+    "FrontSide": THREE.FrontSide,
+    "BackSide": THREE.BackSide,
+    "DoubleSide": THREE.DoubleSide
+  }
+};
+
 const gui = new GUI();
 const materialFolder = gui.addFolder("THREE.Material");
+materialFolder.add(material, "transparent").onChange(() => material.needsUpdate = true);
+materialFolder.add(material, "opacity", 0, 1, 0.1);
+materialFolder.add(material, "depthTest");
+materialFolder.add(material, "depthWrite");
+materialFolder.add(material, "alphaTest", 0, 1, 0.01).onChange(() => updateMaterial());
+materialFolder.add(material, "visible");
+materialFolder.add(material, "side", options.side).onChange(() => updateMaterial());
 
 materialFolder.open();
+
+function updateMaterial() {
+  material.side = Number(material.side);
+  material.needsUpdate = true;
+}
 
 function animate() {
   requestAnimationFrame(animate);
