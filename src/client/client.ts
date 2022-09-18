@@ -42,10 +42,8 @@ document.body.appendChild(stats.dom);
 function animate() {
   requestAnimationFrame(animate);
 
-  // stats.begin();
   cube.rotation.x += 0.01;
   cube.rotation.y += 0.01;
-  // stats.end();
   
   render();
   stats.update();
