@@ -14,6 +14,8 @@ camera.position.z = 2;
 
 const canvas1 = <HTMLCanvasElement>document.querySelector('#c1');
 const canvas2 = <HTMLCanvasElement>document.querySelector('#c2');
+const canvas3 = <HTMLCanvasElement>document.querySelector('#c3');
+const canvas4 = <HTMLCanvasElement>document.querySelector('#c4');
 
 const renderer1 = new THREE.WebGLRenderer({ canvas: canvas1 });
 renderer1.setSize(200, 200);
@@ -21,6 +23,12 @@ renderer1.setSize(200, 200);
 
 const renderer2 = new THREE.WebGLRenderer({ canvas: canvas2 });
 renderer2.setSize(200, 200);
+
+const renderer3 = new THREE.WebGLRenderer({ canvas: canvas3 });
+renderer3.setSize(200, 200);
+
+const renderer4 = new THREE.WebGLRenderer({ canvas: canvas4 });
+renderer4.setSize(200, 200);
 
 new OrbitControls(camera, renderer1.domElement);
 
@@ -53,6 +61,8 @@ function animate() {
 function render() {
   renderer1.render(scene, camera);
   renderer2.render(scene, camera);
+  renderer3.render(scene, camera);
+  renderer4.render(scene, camera);
 }
 
 animate();
