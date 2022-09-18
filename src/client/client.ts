@@ -101,7 +101,7 @@ meshBasicMaterialFolder.add(material, 'wireframe')
 //meshBasicMaterialFolder.add(material, 'wireframeLinewidth', 0, 10)
 //meshBasicMaterialFolder.add(material, 'combine', options.combine).onChange(() => updateMaterial())
 meshBasicMaterialFolder.add(material, 'reflectivity', 0, 1)
-//meshBasicMaterialFolder.add(material, 'refractionRatio', 0, 1)
+meshBasicMaterialFolder.add(material, 'refractionRatio', 0, 1)
 meshBasicMaterialFolder.open();
 
 function updateMaterial() {
