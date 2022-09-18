@@ -23,7 +23,7 @@ document.body.appendChild(renderer.domElement);
 
 new OrbitControls(camera, renderer.domElement);
 
-const boxGeometry = new THREE.BoxGeometry();
+const boxGeometry = new THREE.BoxGeometry(1, 2, 3, 4, 5, 6);
 
 console.log(boxGeometry);
 
