@@ -42,6 +42,7 @@ const stats = Stats();
 document.body.appendChild(stats.dom);
 
 const gui = new GUI();
+gui.add(cube.rotation, "x", 0, Math.PI * 2);
 
 function animate() {
   requestAnimationFrame(animate);
