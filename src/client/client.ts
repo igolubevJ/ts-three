@@ -13,10 +13,6 @@ const light = new THREE.PointLight(0xffffff, 2);
 light.position.set(2, 2, 2);
 scene.add(light);
 
-const light2 = new THREE.PointLight(0xffffff, 2);
-light2.position.set(-10, -10, -10);
-scene.add(light2);
-
 const camera = new THREE.PerspectiveCamera(75, windowCenter, 0.1, 1000);
 camera.position.z = 3;
 
@@ -101,7 +97,7 @@ materialFolder.open();
 
 const data = {
   color: material.color.getHex(),
-  //emissive: material.emissive.getHex(),
+  emissive: material.emissive.getHex(),
 };
 
 const meshLambertMaterialFolder = gui.addFolder('THREE.MeshLambertMaterial');
@@ -109,7 +105,7 @@ const meshLambertMaterialFolder = gui.addFolder('THREE.MeshLambertMaterial');
 meshLambertMaterialFolder.addColor(data, 'color').onChange(() => {
   material.color.setHex(Number(data.color.toString().replace('#', '0x')));
 });
-//meshLambertMaterialFolder.addColor(data, 'emissive').onChange(() => { material.emissive.setHex(Number(data.emissive.toString().replace('#', '0x'))) });
+meshLambertMaterialFolder.addColor(data, 'emissive').onChange(() => { material.emissive.setHex(Number(data.emissive.toString().replace('#', '0x'))) });
 meshLambertMaterialFolder.add(material, 'wireframe');
 meshLambertMaterialFolder.add(material, 'wireframeLinewidth', 0, 10);
 //meshLambertMaterialFolder.add(material, 'flatShading').onChange(() => updateMaterial());
