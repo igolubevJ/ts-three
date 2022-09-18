@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import Stats from 'three/examples/jsm/libs/stats.module';
 
 const scene = new THREE.Scene();
 
@@ -17,7 +18,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.addEventListener('change', render);
+// controls.addEventListener('change', render);
 
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshBasicMaterial({
@@ -36,18 +37,23 @@ function onWindowResize() {
   render();
 }
 
-// function animate() {
-//   requestAnimationFrame(animate);
+const stats = Stats();
+document.body.appendChild(stats.dom);
+function animate() {
+  requestAnimationFrame(animate);
 
-//   cube.rotation.x += 0.01;
-//   cube.rotation.y += 0.01;
-
-//   render();
-// }
+  // stats.begin();
+  cube.rotation.x += 0.01;
+  cube.rotation.y += 0.01;
+  // stats.end();
+  
+  render();
+  stats.update();
+}
 
 function render() {
   renderer.render(scene, camera);
 }
 
-// animate();
-render();
+animate();
+// render();
