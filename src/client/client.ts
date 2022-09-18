@@ -13,6 +13,10 @@ const light = new THREE.PointLight(0xffffff, 2);
 light.position.set(2, 2, 2);
 scene.add(light);
 
+const light2 = new THREE.PointLight(0xffffff, 2);
+light2.position.set(-10, -10, -10);
+scene.add(light2);
+
 const camera = new THREE.PerspectiveCamera(75, windowCenter, 0.1, 1000);
 camera.position.z = 3;
 
