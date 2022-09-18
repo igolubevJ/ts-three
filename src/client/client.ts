@@ -25,10 +25,8 @@ const torusKnotGeometry = new THREE.TorusKnotGeometry()
 //   color: 0x00ff00,
 //   wireframe: true
 // });
-const material = new THREE.MeshBasicMaterial();
-material.needsUpdate = true;
-material.transparent = true;
-material.opacity = 0.25;
+// const material = new THREE.MeshBasicMaterial();
+const material = new THREE.MeshNormalMaterial();
 
 const cube = new THREE.Mesh(boxGeometry, material);
 cube.position.x = 5;
