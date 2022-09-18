@@ -57,6 +57,12 @@ cubePositionFolder.add(cube.position, "y", -20, 20);
 cubePositionFolder.add(cube.position, "z", -20, 20);
 cubePositionFolder.open();
 
+const cubeScaleFolder = cubeFolder.addFolder("Scale");
+cubeScaleFolder.add(cube.scale, "x", -10, 10);
+cubeScaleFolder.add(cube.scale, "y", -10, 10);
+cubeScaleFolder.add(cube.scale, "z", -10, 10);
+cubeScaleFolder.open();
+
 const cameraFolder = gui.addFolder("Camera");
 cameraFolder.add(camera.position, "z", 0, 20);
 cameraFolder.open();
