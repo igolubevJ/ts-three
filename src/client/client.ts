@@ -12,13 +12,17 @@ const camera = new THREE.PerspectiveCamera(
 
 camera.position.z = 2;
 
-const canvas = <HTMLCanvasElement>document.querySelector('#c1');
+const canvas1 = <HTMLCanvasElement>document.querySelector('#c1');
+const canvas2 = <HTMLCanvasElement>document.querySelector('#c2');
 
-const renderer = new THREE.WebGLRenderer({ canvas });
-renderer.setSize(200, 200);
-document.body.appendChild(renderer.domElement);
+const renderer1 = new THREE.WebGLRenderer({ canvas: canvas1 });
+renderer1.setSize(200, 200);
+// document.body.appendChild(renderer.domElement);
 
-new OrbitControls(camera, renderer.domElement);
+const renderer2 = new THREE.WebGLRenderer({ canvas: canvas2 });
+renderer2.setSize(200, 200);
+
+new OrbitControls(camera, renderer1.domElement);
 
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshBasicMaterial({
@@ -47,7 +51,8 @@ function animate() {
 }
 
 function render() {
-  renderer.render(scene, camera);
+  renderer1.render(scene, camera);
+  renderer2.render(scene, camera);
 }
 
 animate();
