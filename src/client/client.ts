@@ -25,11 +25,11 @@ const torusKnotGeometry = new THREE.TorusKnotGeometry();
 
 const material = new THREE.MeshBasicMaterial(); //{ color: 0x00ff00, wireframe: true })
 
-// const texture = new THREE.TextureLoader().load("img/grid.png");
-// material.map = texture;
+const texture = new THREE.TextureLoader().load("img/grid.png");
+material.map = texture;
 const envTexture = new THREE.CubeTextureLoader().load(["img/px_50.png", "img/nx_50.png", "img/py_50.png", "img/ny_50.png", "img/pz_50.png", "img/nz_50.png"]);
-// envTexture.mapping = THREE.CubeReflectionMapping;
-envTexture.mapping = THREE.CubeRefractionMapping;
+envTexture.mapping = THREE.CubeReflectionMapping;
+// envTexture.mapping = THREE.CubeRefractionMapping;
 material.envMap = envTexture;
 
 const cube = new THREE.Mesh(boxGeometry, material);
@@ -99,7 +99,7 @@ const meshBasicMaterialFolder = gui.addFolder('THREE.MeshBasicMaterial');
 meshBasicMaterialFolder.addColor(data, 'color').onChange(() => { material.color.setHex(Number(data.color.toString().replace('#', '0x'))) })
 meshBasicMaterialFolder.add(material, 'wireframe')
 //meshBasicMaterialFolder.add(material, 'wireframeLinewidth', 0, 10)
-//meshBasicMaterialFolder.add(material, 'combine', options.combine).onChange(() => updateMaterial())
+meshBasicMaterialFolder.add(material, 'combine', options.combine).onChange(() => updateMaterial())
 meshBasicMaterialFolder.add(material, 'reflectivity', 0, 1)
 meshBasicMaterialFolder.add(material, 'refractionRatio', 0, 1)
 meshBasicMaterialFolder.open();
