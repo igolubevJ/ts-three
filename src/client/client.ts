@@ -5,15 +5,17 @@ const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
   75,
-  window.innerWidth / window.innerHeight,
+  1,
   0.1,
   1000
 );
 
 camera.position.z = 2;
 
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
+const canvas = <HTMLCanvasElement>document.querySelector('#c1');
+
+const renderer = new THREE.WebGLRenderer({ canvas });
+renderer.setSize(200, 200);
 document.body.appendChild(renderer.domElement);
 
 new OrbitControls(camera, renderer.domElement);
@@ -27,13 +29,13 @@ const material = new THREE.MeshBasicMaterial({
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
-window.addEventListener('resize', onWindowResize, false);
-function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  render();
-}
+// window.addEventListener('resize', onWindowResize, false);
+// function onWindowResize() {
+//   camera.aspect = window.innerWidth / window.innerHeight;
+//   camera.updateProjectionMatrix();
+//   renderer.setSize(window.innerWidth, window.innerHeight);
+//   render();
+// }
 
 function animate() {
   requestAnimationFrame(animate);
