@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { GUI } from 'dat.gui';
-import { AxesHelper } from 'three';
 
 const scene = new THREE.Scene();
 scene.add(new THREE.AxesHelper(5));
@@ -14,50 +13,27 @@ const camera = new THREE.PerspectiveCamera(
   1000
 );
 
-camera.position.x = 4;
+camera.position.x = -2;
 camera.position.y = 4;
-camera.position.z = 4;
+camera.position.z = 5;
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.target.set(0, 0, 0);
-// controls.addEventListener('change', render);
+new OrbitControls(camera, renderer.domElement);
 
-const light1 = new THREE.PointLight();
-light1.position.set(10, 10, 10);
-scene.add(light1);
+const boxGeometry = new THREE.BoxGeometry();
 
-const light2 = new THREE.PointLight();
-light2.position.set(-10, 10, 10);
-scene.add(light2);
+console.log(boxGeometry);
 
-const object1 = new THREE.Mesh(
-  new THREE.SphereGeometry(),
-  new THREE.MeshPhongMaterial({ color: 0xff0000 })
-);
+const material = new THREE.MeshBasicMaterial({
+  color: 0x00ff00,
+  wireframe: true
+});
 
-object1.position.set(4, 0, 0);
-scene.add(object1);
-object1.add(new THREE.AxesHelper(5));
-
-const object2 = new THREE.Mesh(
-  new THREE.SphereGeometry(),
-  new THREE.MeshPhongMaterial({ color: 0x00ff00 })
-);
-object2.position.set(4, 0, 0);
-object1.add(object2);
-object2.add(new THREE.AxesHelper(5));
-
-const object3 = new THREE.Mesh(
-  new THREE.SphereGeometry(),
-  new THREE.MeshPhongMaterial({ color: 0x0000ff })
-);
-object3.position.set(4, 0, 0);
-object2.add(object3);
-object3.add(new THREE.AxesHelper(5));
+const cube = new THREE.Mesh(boxGeometry, material);
+scene.add(cube);
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
@@ -72,24 +48,23 @@ document.body.appendChild(stats.dom);
 
 const gui = new GUI();
 
-const object1Folder = gui.addFolder("Object 1");
-object1Folder.add(object1.position, "x", -10, 10).name("Position X");
-object1Folder.add(object1.rotation, "x", 0, Math.PI * 2).name("Rotation X");
-object1Folder.add(object1.scale, "x", -10, 10).name("Scale X");
-object1Folder.open();
+const cubeFolder = gui.addFolder('Cube')
+const cubeRotationFolder = cubeFolder.addFolder('Rotation')
+cubeRotationFolder.add(cube.rotation, 'x', 0, Math.PI * 2, 0.01)
+cubeRotationFolder.add(cube.rotation, 'y', 0, Math.PI * 2, 0.01)
+cubeRotationFolder.add(cube.rotation, 'z', 0, Math.PI * 2, 0.01)
 
-const object2Folder = gui.addFolder("Object 2");
-object2Folder.add(object2.position, "x", -10, 10).name("Position X");
-object2Folder.add(object2.rotation, "x", 0, Math.PI * 2).name("Rotation X");
-object2Folder.add(object2.scale, "x", -10, 10).name("Scale X");
-object2Folder.open();
+const cubePositionFolder = cubeFolder.addFolder('Position')
+cubePositionFolder.add(cube.position, 'x', -10, 10)
+cubePositionFolder.add(cube.position, 'y', -10, 10)
+cubePositionFolder.add(cube.position, 'z', -10, 10)
 
-
-const object3Folder = gui.addFolder("Object 3");
-object3Folder.add(object3.position, "x", -10, 10).name("Position X");
-object3Folder.add(object3.rotation, "x", 0, Math.PI * 2).name("Rotation X");
-object3Folder.add(object3.scale, "x", -10, 10).name("Scale X");
-object3Folder.open();
+const cubeScaleFolder = cubeFolder.addFolder('Scale')
+cubeScaleFolder.add(cube.scale, 'x', -5, 5, 0.1) //.onFinishChange(() => console.dir(cube.geometry))
+cubeScaleFolder.add(cube.scale, 'y', -5, 5, 0.1)
+cubeScaleFolder.add(cube.scale, 'z', -5, 5, 0.1)
+cubeFolder.add(cube, 'visible', true)
+cubeFolder.open()
 
 const cameraFolder = gui.addFolder("Camera");
 cameraFolder.add(camera.position, "z", 0, 20);
@@ -101,25 +76,7 @@ function animate() {
   requestAnimationFrame(animate);
   render();
 
-  const object1WorldPosition = new THREE.Vector3();
-  object1.getWorldPosition(object1WorldPosition);
-
-  const object2WorldPosition = new THREE.Vector3();
-  object2.getWorldPosition(object2WorldPosition);
-
-  const object3WorldPosition = new THREE.Vector3();
-  object3.getWorldPosition(object3WorldPosition);
-
-  debug.innerText = 
-    'Red\n' +
-    'Local Pos X : ' + object1.position.x.toFixed(2) + '\n' +
-    'World Pos X : ' + object1WorldPosition.x.toFixed(2) + '\n' +
-    'Green\n' +
-    'Local Pos X : ' + object2.position.x.toFixed(2) + '\n' +
-    'World Pos X : ' + object2WorldPosition.x.toFixed(2) + '\n' +
-    'Blue\n' +
-    'Local Pos X : ' + object3.position.x.toFixed(2) + '\n' +
-    'World Pos X : ' + object3WorldPosition.x.toFixed(2) + '\n';
+  // debug.innerText = 'Matrix\n' + cube.matrix.elements.toString().replace(/,/g, '\n')
     
   stats.update();
 }
