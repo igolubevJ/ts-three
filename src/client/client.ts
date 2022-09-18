@@ -43,10 +43,19 @@ document.body.appendChild(stats.dom);
 
 const gui = new GUI();
 const cubeFolder = gui.addFolder("Cube");
-cubeFolder.add(cube.rotation, "x", 0, Math.PI * 2);
-cubeFolder.add(cube.rotation, "y", 0, Math.PI * 2);
-cubeFolder.add(cube.rotation, "z", 0, Math.PI * 2);
 cubeFolder.open();
+
+const cubeRotationFolder = cubeFolder.addFolder("Rotation")
+cubeRotationFolder.add(cube.rotation, "x", 0, Math.PI * 2);
+cubeRotationFolder.add(cube.rotation, "y", 0, Math.PI * 2);
+cubeRotationFolder.add(cube.rotation, "z", 0, Math.PI * 2);
+cubeRotationFolder.open();
+
+const cubePositionFolder = cubeFolder.addFolder("Position");
+cubePositionFolder.add(cube.position, "x", -20, 20);
+cubePositionFolder.add(cube.position, "y", -20, 20);
+cubePositionFolder.add(cube.position, "z", -20, 20);
+cubePositionFolder.open();
 
 const cameraFolder = gui.addFolder("Camera");
 cameraFolder.add(camera.position, "z", 0, 20);
