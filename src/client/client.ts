@@ -43,11 +43,11 @@ const controls = new OrbitControls(camera, renderer.domElement)
 //     MIDDLE: THREE.MOUSE.DOLLY,
 //     RIGHT: THREE.MOUSE.PAN
 // }
-controls.touches = {
-    ONE: THREE.TOUCH.ROTATE,
-    TWO: THREE.TOUCH.DOLLY_PAN
-}
-// controls.screenSpacePanning = true
+// controls.touches = {
+//     ONE: THREE.TOUCH.ROTATE,
+//     TWO: THREE.TOUCH.DOLLY_PAN
+// }
+controls.screenSpacePanning = false
 // controls.minAzimuthAngle = 0
 // controls.maxAzimuthAngle = Math.PI / 2
 // controls.minPolarAngle = 0
