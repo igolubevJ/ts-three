@@ -31,18 +31,18 @@ const controls = new OrbitControls(camera, renderer.domElement)
 // controls.enableDamping = true
 // controls.dampingFactor = .01
 // controls.enableKeys = true //older versions
-controls.listenToKeyEvents(document.body)
-controls.keys = {
-    LEFT: "KeyD", //left arrow
-    UP: "KeyW", // up arrow
-    RIGHT: "KeyA", // right arrow
-    BOTTOM: "KeyS" // down arrow
-}
-// controls.mouseButtons = {
-//     LEFT: THREE.MOUSE.ROTATE,
-//     MIDDLE: THREE.MOUSE.DOLLY,
-//     RIGHT: THREE.MOUSE.PAN
+// controls.listenToKeyEvents(document.body)
+// controls.keys = {
+//     LEFT: "KeyD", //left arrow
+//     UP: "KeyW", // up arrow
+//     RIGHT: "KeyA", // right arrow
+//     BOTTOM: "KeyS" // down arrow
 // }
+controls.mouseButtons = {
+    LEFT: THREE.MOUSE.ROTATE,
+    MIDDLE: THREE.MOUSE.DOLLY,
+    RIGHT: THREE.MOUSE.PAN
+}
 // controls.touches = {
 //     ONE: THREE.TOUCH.ROTATE,
 //     TWO: THREE.TOUCH.DOLLY_PAN
