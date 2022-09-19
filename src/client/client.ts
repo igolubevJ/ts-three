@@ -20,12 +20,12 @@ document.body.appendChild(renderer.domElement)
 const controls = new OrbitControls(camera, renderer.domElement)
 
 // camera.lookAt(0.5, 0.5, 0.5)
-controls.target.set(.5, .5, .5)
-controls.update()
+// controls.target.set(.5, .5, .5)
+// controls.update()
 
-// controls.addEventListener('change', () => console.log("Controls Change"))
-// controls.addEventListener('start', () => console.log("Controls Start Event"))
-// controls.addEventListener('end', () => console.log("Controls End Event"))
+controls.addEventListener('change', () => console.log("Controls Change"))
+controls.addEventListener('start', () => console.log("Controls Start Event"))
+controls.addEventListener('end', () => console.log("Controls End Event"))
 // controls.autoRotate = true
 // controls.autoRotateSpeed = 10
 // controls.enableDamping = true
