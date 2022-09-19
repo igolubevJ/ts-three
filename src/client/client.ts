@@ -30,9 +30,9 @@ const renderer = new THREE.WebGLRenderer()
 renderer.setSize(window.innerWidth, window.innerHeight)
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
-//renderer.shadowMap.type = THREE.BasicShadowMap
-//renderer.shadowMap.type = THREE.PCFShadowMap
-//renderer.shadowMap.type = THREE.VSMShadowMap
+// renderer.shadowMap.type = THREE.BasicShadowMap
+// renderer.shadowMap.type = THREE.PCFShadowMap
+// renderer.shadowMap.type = THREE.VSMShadowMap
 document.body.appendChild(renderer.domElement)
 
 new OrbitControls(camera, renderer.domElement)
@@ -113,8 +113,8 @@ document.body.appendChild(stats.dom)
 const data = {
     color: light.color.getHex(),
     mapsEnabled: true,
-    //shadowMapSizeWidth: 512,
-    //shadowMapSizeHeight: 512,
+    shadowMapSizeWidth: 512,
+    shadowMapSizeHeight: 512,
 }
 
 const gui = new GUI()
@@ -131,18 +131,18 @@ spotLightFolder.add(light, 'angle', 0, 1, 0.1)
 spotLightFolder.add(light, 'penumbra', 0, 1, 0.1)
 //spotLightFolder.add(light.shadow.camera, "near", 0.1, 100).onChange(() => light.shadow.camera.updateProjectionMatrix())
 //spotLightFolder.add(light.shadow.camera, "far", 0.1, 100).onChange(() => light.shadow.camera.updateProjectionMatrix())
-//spotLightFolder.add(data, "shadowMapSizeWidth", [256, 512, 1024, 2048, 4096]).onChange(() => updateShadowMapSize())
-//spotLightFolder.add(data, "shadowMapSizeHeight", [256, 512, 1024, 2048, 4096]).onChange(() => updateShadowMapSize())
+spotLightFolder.add(data, "shadowMapSizeWidth", [256, 512, 1024, 2048, 4096]).onChange(() => updateShadowMapSize())
+spotLightFolder.add(data, "shadowMapSizeHeight", [256, 512, 1024, 2048, 4096]).onChange(() => updateShadowMapSize())
 spotLightFolder.add(light.position, 'x', -50, 50, 0.01)
 spotLightFolder.add(light.position, 'y', -50, 50, 0.01)
 spotLightFolder.add(light.position, 'z', -50, 50, 0.01)
 spotLightFolder.open()
 
-// function updateShadowMapSize() {
-//     light.shadow.mapSize.width = data.shadowMapSizeWidth
-//     light.shadow.mapSize.height = data.shadowMapSizeHeight
-//     ;(light.shadow.map as any) = null
-// }
+function updateShadowMapSize() {
+    light.shadow.mapSize.width = data.shadowMapSizeWidth
+    light.shadow.mapSize.height = data.shadowMapSizeHeight
+    ;(light.shadow.map as any) = null
+}
 
 const meshesFolder = gui.addFolder('Meshes')
 meshesFolder.add(data, 'mapsEnabled').onChange(() => {
