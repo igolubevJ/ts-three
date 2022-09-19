@@ -34,8 +34,8 @@ material.clearcoat = 0.3;
 material.clearcoatRoughness = 0.25;
 material.color = new THREE.Color(0xffffff);
 
-// const texture = new THREE.TextureLoader().load("img/grid.png");
-// material.map = texture;
+const texture = new THREE.TextureLoader().load("img/grid.png");
+material.map = texture;
 
 const pmremGenerator = new THREE.PMREMGenerator(renderer);
 const envTexture = new THREE.CubeTextureLoader().load(
@@ -147,8 +147,8 @@ function updateMaterial() {
 function animate() {
     requestAnimationFrame(animate);
 
-    // torusKnot.rotation.x += 0.01
-    // torusKnot.rotation.y += 0.01
+    torusKnot.rotation.x += 0.01
+    torusKnot.rotation.y += 0.01
 
     render();
 
