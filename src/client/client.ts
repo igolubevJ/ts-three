@@ -149,13 +149,13 @@ function regeneratePlaneGeometry() {
     plane.geometry = newGeometry
 }
 
-// const textureFolder = gui.addFolder("Texture")
-// textureFolder.add(texture.repeat, 'x', 0.1, 1, 0.1)
-// textureFolder.add(texture.repeat, 'y', 0.1, 1, 0.1)
-// textureFolder.add(texture.center, 'x', 0, 1, 0.001)
-// textureFolder.add(texture.center, 'y', 0, 1, 0.001)
+const textureFolder = gui.addFolder("Texture")
+textureFolder.add(texture.repeat, 'x', 0.1, 1, 0.1)
+textureFolder.add(texture.repeat, 'y', 0.1, 1, 0.1)
+textureFolder.add(texture.center, 'x', 0, 1, 0.001)
+textureFolder.add(texture.center, 'y', 0, 1, 0.001)
 
-// textureFolder.open()
+textureFolder.open()
 
 function animate() {
     requestAnimationFrame(animate)
