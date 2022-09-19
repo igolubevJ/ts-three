@@ -19,8 +19,8 @@ document.body.appendChild(renderer.domElement)
 
 const controls = new OrbitControls(camera, renderer.domElement)
 
-// camera.lookAt(0.5, 0.5, 0.5)
-// controls.target.set(.5, .5, .5)
+camera.lookAt(0.5, 0.5, 0.5)
+controls.target.set(.5, .5, .5)
 // controls.update()
 
 // controls.addEventListener('change', () => console.log("Controls Change"))
