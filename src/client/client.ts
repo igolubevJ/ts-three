@@ -127,6 +127,7 @@ meshToonMaterialFolder.open();
 
 function updateMaterial() {
     material.side = Number(material.side);
+    material.gradientMap = eval(data.gradientMap as string);
     material.needsUpdate = true;
 }
 
@@ -134,6 +135,21 @@ function animate() {
     requestAnimationFrame(animate);
 
     render();
+
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
+
+    sphere.rotation.x += 0.01;
+    sphere.rotation.y += 0.01;
+
+    icosahedron.rotation.x += 0.01;
+    icosahedron.rotation.y += 0.01;
+
+    plane.rotation.x += 0.01;
+    plane.rotation.y += 0.01;
+
+    torusKnot.rotation.x += 0.01;
+    torusKnot.rotation.y += 0.01;
 
     stats.update();
 }
