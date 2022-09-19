@@ -50,10 +50,10 @@ const controls = new OrbitControls(camera, renderer.domElement)
 // controls.screenSpacePanning = true
 // controls.minAzimuthAngle = 0
 // controls.maxAzimuthAngle = Math.PI / 2
-controls.minPolarAngle = 0
-controls.maxPolarAngle = Math.PI
-// controls.maxDistance = 4
-// controls.minDistance = 2
+// controls.minPolarAngle = 0
+// controls.maxPolarAngle = Math.PI
+controls.maxDistance = 4
+controls.minDistance = 2
 
 const geometry = new THREE.BoxGeometry()
 const material = new THREE.MeshBasicMaterial({
