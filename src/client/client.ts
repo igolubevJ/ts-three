@@ -97,6 +97,9 @@ lightFolder.addColor(data, 'color').onChange(() => {
     light.color.setHex(Number(data.color.toString().replace('#', '0x')))
 })
 lightFolder.add(light, 'intensity', 0, 1, 0.01)
+lightFolder.add(light.rotation, "x", 0, Math.PI * 2, 0.1);
+lightFolder.add(light.rotation, "y", 0, Math.PI * 2, 0.1);
+lightFolder.add(light.rotation, "z", 0, Math.PI * 2, 0.1);
 
 const directionalLightFolder = gui.addFolder('THREE.DirectionalLight')
 directionalLightFolder.add(light.position, "x", -100, 100, 0.01)
