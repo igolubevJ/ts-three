@@ -38,15 +38,15 @@ const controls = new OrbitControls(camera, renderer.domElement)
 //     RIGHT: "KeyA", // right arrow
 //     BOTTOM: "KeyS" // down arrow
 // }
-controls.mouseButtons = {
-    LEFT: THREE.MOUSE.ROTATE,
-    MIDDLE: THREE.MOUSE.DOLLY,
-    RIGHT: THREE.MOUSE.PAN
-}
-// controls.touches = {
-//     ONE: THREE.TOUCH.ROTATE,
-//     TWO: THREE.TOUCH.DOLLY_PAN
+// controls.mouseButtons = {
+//     LEFT: THREE.MOUSE.ROTATE,
+//     MIDDLE: THREE.MOUSE.DOLLY,
+//     RIGHT: THREE.MOUSE.PAN
 // }
+controls.touches = {
+    ONE: THREE.TOUCH.ROTATE,
+    TWO: THREE.TOUCH.DOLLY_PAN
+}
 // controls.screenSpacePanning = true
 // controls.minAzimuthAngle = 0
 // controls.maxAzimuthAngle = Math.PI / 2
