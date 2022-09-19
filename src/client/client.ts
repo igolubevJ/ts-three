@@ -29,8 +29,8 @@ const controls = new TrackballControls(camera, renderer.domElement)
 // controls.noPan = true //default false
 // controls.noRotate = true //default false
 // controls.noZoom = true //default false
-controls.staticMoving = true //default false
-// controls.dynamicDampingFactor = 0.1
+// controls.staticMoving = true //default false
+controls.dynamicDampingFactor = 0.1
 // controls.maxDistance = 4
 // controls.minDistance = 2
 
