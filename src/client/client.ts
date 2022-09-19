@@ -25,23 +25,19 @@ const icosahedronGeometry = new THREE.IcosahedronGeometry(1, 0);
 const planeGeometry = new THREE.PlaneGeometry();
 const torusKnotGeometry = new THREE.TorusKnotGeometry();
 
-const material = new THREE.MeshMatcapMaterial();
+const threeTone = new THREE.TextureLoader().load("img/threeTone.jpg");
+threeTone.minFilter = THREE.NearestFilter;
+threeTone.magFilter = THREE.NearestFilter;
 
+const fourTone = new THREE.TextureLoader().load("img/fourTone.jpg");
+fourTone.minFilter = THREE.NearestFilter;
+fourTone.magFilter = THREE.NearestFilter;
 
-// const texture = new THREE.TextureLoader().load("img/grid.png");
-// material.map = texture;
+const fiveTone = new THREE.TextureLoader().load("img/fiveTone.jpg");
+fiveTone.minFilter = THREE.NearestFilter;
+fiveTone.magFilter = THREE.NearestFilter;
 
-// const envTexture = new THREE.CubeTextureLoader().load(["img/px_50.png", "img/nx_50.png", "img/py_50.png", "img/ny_50.png", "img/pz_50.png", "img/nz_50.png"]);
-//envTexture.mapping = THREE.CubeReflectionMapping;
-// envTexture.mapping = THREE.CubeRefractionMapping;
-// material.envMap = envTexture;
-
-// const matcapTexture = new THREE.TextureLoader().load('img/matcap-opal.png')
-const matcapTexture = new THREE.TextureLoader().load("img/matcap-crystal.png")
-//const matcapTexture = new THREE.TextureLoader().load("img/matcap-gold.png")
-// const matcapTexture = new THREE.TextureLoader().load("img/matcap-red-light.png")
-// const matcapTexture = new THREE.TextureLoader().load("img/matcap-green-yellow-pink.png")
-material.matcap = matcapTexture
+const material = new THREE.MeshToonMaterial();
 
 const cube = new THREE.Mesh(boxGeometry, material);
 cube.position.x = 5;
@@ -78,11 +74,33 @@ const options = {
     side: {
         FrontSide: THREE.FrontSide,
         BackSide: THREE.BackSide,
-        DoubleSide: THREE.DoubleSide
-    }
+        DoubleSide: THREE.DoubleSide,
+    },
+    gradientMap: {
+        Default: null,
+        threeTone: 'threeTone',
+        fourTone: 'fourTone',
+        fiveTone: 'fiveTone',
+    },
 };
 
+
 const gui = new GUI();
+
+const data = {
+    lightColor: light.color.getHex(),
+    color: material.color.getHex(),
+    gradientMap: 'threeTone',
+};
+
+material.gradientMap = threeTone;
+
+const lightFolder = gui.addFolder('THREE.Light');
+lightFolder.addColor(data, 'lightColor').onChange(() => {
+    light.color.setHex(Number(data.lightColor.toString().replace('#', '0x')))
+});
+lightFolder.add(light, 'intensity', 0, 4);
+
 const materialFolder = gui.addFolder('THREE.Material');
 materialFolder.add(material, 'transparent').onChange(() => material.needsUpdate = true);
 materialFolder.add(material, 'opacity', 0, 1, 0.01);
@@ -95,25 +113,21 @@ materialFolder.add(material, 'visible');
 materialFolder
     .add(material, 'side', options.side)
     .onChange(() => updateMaterial());
-materialFolder.open();
+//materialFolder.open();
 
-const data = {
-    color: material.color.getHex(),
-};
-
-const meshPhysicalMaterialFolder = gui.addFolder('THREE.MeshPhysicalMaterial');
-
-const meshMatcapMaterialFolder = gui.addFolder('THREE.MeshMatcapMaterial');
-meshMatcapMaterialFolder.addColor(data, 'color').onChange(() => {
-    material.color.setHex(Number(data.color.toString().replace('#', '0x')));
+const meshToonMaterialFolder = gui.addFolder('THREE.MeshToonMaterial')
+meshToonMaterialFolder.addColor(data, 'color').onChange(() => {
+    material.color.setHex(Number(data.color.toString().replace('#', '0x')))
 });
-meshMatcapMaterialFolder
-    .add(material, 'flatShading')
+
+meshToonMaterialFolder
+    .add(data, 'gradientMap', options.gradientMap)
     .onChange(() => updateMaterial());
-meshMatcapMaterialFolder.open();
+meshToonMaterialFolder.open();
 
 function updateMaterial() {
     material.side = Number(material.side);
+    material.gradientMap = eval(data.gradientMap as string);
     material.needsUpdate = true;
 }
 
@@ -121,6 +135,21 @@ function animate() {
     requestAnimationFrame(animate);
 
     render();
+
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
+
+    sphere.rotation.x += 0.01;
+    sphere.rotation.y += 0.01;
+
+    icosahedron.rotation.x += 0.01;
+    icosahedron.rotation.y += 0.01;
+
+    plane.rotation.x += 0.01;
+    plane.rotation.y += 0.01;
+
+    torusKnot.rotation.x += 0.01;
+    torusKnot.rotation.y += 0.01;
 
     stats.update();
 }
