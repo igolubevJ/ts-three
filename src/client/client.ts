@@ -18,10 +18,10 @@ renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
 
 const controls = new TrackballControls(camera, renderer.domElement)
-controls.addEventListener('change', () => console.log("Controls Change"))
-controls.addEventListener('start', () => console.log("Controls Start Event"))
-controls.addEventListener('end', () => console.log("Controls End Event"))
-// controls.enabled = false
+// controls.addEventListener('change', () => console.log("Controls Change"))
+// controls.addEventListener('start', () => console.log("Controls Start Event"))
+// controls.addEventListener('end', () => console.log("Controls End Event"))
+controls.enabled = false
 // controls.rotateSpeed = 1.0
 // controls.zoomSpeed = 1.2
 // controls.panSpeed = 0.8
