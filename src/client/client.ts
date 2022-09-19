@@ -26,11 +26,11 @@ document.body.appendChild(renderer.domElement)
 
 new OrbitControls(camera, renderer.domElement)
 
-// const planeGeometry = new THREE.PlaneGeometry(100, 10)
-// const plane = new THREE.Mesh(planeGeometry, new THREE.MeshPhongMaterial())
-// plane.rotateX(-Math.PI / 2)
-// //plane.position.y = -1.75
-// scene.add(plane)
+const planeGeometry = new THREE.PlaneGeometry(100, 10)
+const plane = new THREE.Mesh(planeGeometry, new THREE.MeshPhongMaterial())
+plane.rotateX(-Math.PI / 2)
+//plane.position.y = -1.75
+scene.add(plane)
 
 const torusGeometry = [
     new THREE.TorusGeometry(),
@@ -122,7 +122,7 @@ meshesFolder.add(data, 'mapsEnabled').onChange(() => {
 function animate() {
     requestAnimationFrame(animate)
 
-    //helper.update()
+    helper.update()
 
     torus.forEach((t) => {
         t.rotation.y += 0.01
