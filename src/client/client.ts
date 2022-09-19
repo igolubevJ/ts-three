@@ -28,10 +28,10 @@ const controls = new OrbitControls(camera, renderer.domElement)
 // controls.addEventListener('end', () => console.log("Controls End Event"))
 // controls.autoRotate = true
 // controls.autoRotateSpeed = 10
-controls.enableDamping = true
-controls.dampingFactor = .01
+// controls.enableDamping = true
+// controls.dampingFactor = .01
 // controls.enableKeys = true //older versions
-// controls.listenToKeyEvents(document.body)
+controls.listenToKeyEvents(document.body)
 // controls.keys = {
 //     LEFT: "ArrowLeft", //left arrow
 //     UP: "ArrowUp", // up arrow
