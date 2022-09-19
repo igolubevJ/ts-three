@@ -29,7 +29,7 @@ const controls = new OrbitControls(camera, renderer.domElement)
 // controls.autoRotate = true
 // controls.autoRotateSpeed = 10
 controls.enableDamping = true
-// controls.dampingFactor = .01
+controls.dampingFactor = .01
 // controls.enableKeys = true //older versions
 // controls.listenToKeyEvents(document.body)
 // controls.keys = {
