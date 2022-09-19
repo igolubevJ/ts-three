@@ -48,10 +48,10 @@ const controls = new OrbitControls(camera, renderer.domElement)
 //     TWO: THREE.TOUCH.DOLLY_PAN
 // }
 // controls.screenSpacePanning = true
-controls.minAzimuthAngle = 0
-controls.maxAzimuthAngle = Math.PI / 2
-// controls.minPolarAngle = 0
-// controls.maxPolarAngle = Math.PI
+// controls.minAzimuthAngle = 0
+// controls.maxAzimuthAngle = Math.PI / 2
+controls.minPolarAngle = 0
+controls.maxPolarAngle = Math.PI
 // controls.maxDistance = 4
 // controls.minDistance = 2
 
