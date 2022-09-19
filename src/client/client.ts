@@ -30,9 +30,9 @@ const controls = new TrackballControls(camera, renderer.domElement)
 // controls.noRotate = true //default false
 // controls.noZoom = true //default false
 // controls.staticMoving = true //default false
-controls.dynamicDampingFactor = 0.1
-// controls.maxDistance = 4
-// controls.minDistance = 2
+// controls.dynamicDampingFactor = 0.1
+controls.maxDistance = 4
+controls.minDistance = 2
 
 const geometry = new THREE.BoxGeometry()
 const material = new THREE.MeshBasicMaterial({
