@@ -6,9 +6,9 @@ import { GUI } from 'dat.gui';
 const scene = new THREE.Scene();
 scene.add(new THREE.AxesHelper(5));
 
-// const light = new THREE.PointLight(0xffffff, 2);
-// light.position.set(10, 10, 10);
-// scene.add(light);
+const light = new THREE.PointLight(0xffffff, 2);
+light.position.set(10, 10, 10);
+scene.add(light);
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 3;
@@ -28,18 +28,19 @@ const torusKnotGeometry = new THREE.TorusKnotGeometry();
 const material = new THREE.MeshMatcapMaterial();
 
 
-const texture = new THREE.TextureLoader().load("img/grid.png");
-material.map = texture;
-const envTexture = new THREE.CubeTextureLoader().load(["img/px_50.png", "img/nx_50.png", "img/py_50.png", "img/ny_50.png", "img/pz_50.png", "img/nz_50.png"]);
-// //envTexture.mapping = THREE.CubeReflectionMapping;
+// const texture = new THREE.TextureLoader().load("img/grid.png");
+// material.map = texture;
+
+// const envTexture = new THREE.CubeTextureLoader().load(["img/px_50.png", "img/nx_50.png", "img/py_50.png", "img/ny_50.png", "img/pz_50.png", "img/nz_50.png"]);
+//envTexture.mapping = THREE.CubeReflectionMapping;
 // envTexture.mapping = THREE.CubeRefractionMapping;
 // material.envMap = envTexture;
 
-const matcapTexture = new THREE.TextureLoader().load('img/matcap-opal.png')
-//const matcapTexture = new THREE.TextureLoader().load("img/matcap-crystal.png")
+// const matcapTexture = new THREE.TextureLoader().load('img/matcap-opal.png')
+const matcapTexture = new THREE.TextureLoader().load("img/matcap-crystal.png")
 //const matcapTexture = new THREE.TextureLoader().load("img/matcap-gold.png")
-//const matcapTexture = new THREE.TextureLoader().load("img/matcap-red-light.png")
-//const matcapTexture = new THREE.TextureLoader().load("img/matcap-green-yellow-pink.png")
+// const matcapTexture = new THREE.TextureLoader().load("img/matcap-red-light.png")
+// const matcapTexture = new THREE.TextureLoader().load("img/matcap-green-yellow-pink.png")
 material.matcap = matcapTexture
 
 const cube = new THREE.Mesh(boxGeometry, material);
