@@ -23,10 +23,10 @@ const controls = new OrbitControls(camera, renderer.domElement)
 // controls.target.set(.5, .5, .5)
 // controls.update()
 
-controls.addEventListener('change', () => console.log("Controls Change"))
-controls.addEventListener('start', () => console.log("Controls Start Event"))
-controls.addEventListener('end', () => console.log("Controls End Event"))
-// controls.autoRotate = true
+// controls.addEventListener('change', () => console.log("Controls Change"))
+// controls.addEventListener('start', () => console.log("Controls Start Event"))
+// controls.addEventListener('end', () => console.log("Controls End Event"))
+controls.autoRotate = true
 // controls.autoRotateSpeed = 10
 // controls.enableDamping = true
 // controls.dampingFactor = .01
@@ -78,7 +78,7 @@ document.body.appendChild(stats.dom)
 function animate() {
     requestAnimationFrame(animate)
 
-    // controls.update()
+    controls.update()
 
     render()
 
