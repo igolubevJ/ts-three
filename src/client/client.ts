@@ -7,15 +7,15 @@ const scene = new THREE.Scene()
 scene.add(new THREE.AxesHelper(5))
 
 const light = new THREE.SpotLight()
-// light.castShadow = true;
-// light.shadow.mapSize.width = 512;
-// light.shadow.mapSize.height = 512;
-// light.shadow.camera.near = 0.5;
-// light.shadow.camera.far = 100
+light.castShadow = true;
+light.shadow.mapSize.width = 512;
+light.shadow.mapSize.height = 512;
+light.shadow.camera.near = 0.5;
+light.shadow.camera.far = 100
 scene.add(light)
 
-const helper = new THREE.SpotLightHelper(light)
-//const helper = new THREE.CameraHelper(light.shadow.camera);
+// const helper = new THREE.SpotLightHelper(light)
+const helper = new THREE.CameraHelper(light.shadow.camera);
 scene.add(helper)
 
 const camera = new THREE.PerspectiveCamera(
@@ -28,8 +28,8 @@ camera.position.z = 7
 
 const renderer = new THREE.WebGLRenderer()
 renderer.setSize(window.innerWidth, window.innerHeight)
-//renderer.shadowMap.enabled = true
-//renderer.shadowMap.type = THREE.PCFSoftShadowMap
+renderer.shadowMap.enabled = true
+renderer.shadowMap.type = THREE.PCFSoftShadowMap
 //renderer.shadowMap.type = THREE.BasicShadowMap
 //renderer.shadowMap.type = THREE.PCFShadowMap
 //renderer.shadowMap.type = THREE.VSMShadowMap
@@ -41,7 +41,7 @@ const planeGeometry = new THREE.PlaneGeometry(100, 20)
 const plane = new THREE.Mesh(planeGeometry, new THREE.MeshPhongMaterial())
 plane.rotateX(-Math.PI / 2)
 plane.position.y = -1.75
-//plane.receiveShadow = true;
+plane.receiveShadow = true;
 scene.add(plane)
 
 const torusGeometry = [
@@ -81,11 +81,11 @@ torus[2].position.x = 0
 torus[3].position.x = 4
 torus[4].position.x = 8
 
-// torus[0].castShadow = true
-// torus[1].castShadow = true
-// torus[2].castShadow = true
-// torus[3].castShadow = true
-// torus[4].castShadow = true
+torus[0].castShadow = true
+torus[1].castShadow = true
+torus[2].castShadow = true
+torus[3].castShadow = true
+torus[4].castShadow = true
 
 // torus[0].receiveShadow = true
 // torus[1].receiveShadow = true
