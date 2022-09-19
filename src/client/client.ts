@@ -26,9 +26,9 @@ const controls = new OrbitControls(camera, renderer.domElement)
 // controls.addEventListener('change', () => console.log("Controls Change"))
 // controls.addEventListener('start', () => console.log("Controls Start Event"))
 // controls.addEventListener('end', () => console.log("Controls End Event"))
-controls.autoRotate = true
-controls.autoRotateSpeed = 10
-// controls.enableDamping = true
+// controls.autoRotate = true
+// controls.autoRotateSpeed = 10
+controls.enableDamping = true
 // controls.dampingFactor = .01
 // controls.enableKeys = true //older versions
 // controls.listenToKeyEvents(document.body)
