@@ -87,11 +87,11 @@ torus[2].castShadow = true
 torus[3].castShadow = true
 torus[4].castShadow = true
 
-// torus[0].receiveShadow = true
-// torus[1].receiveShadow = true
-// torus[2].receiveShadow = true
-// torus[3].receiveShadow = true
-// torus[4].receiveShadow = true
+torus[0].receiveShadow = true
+torus[1].receiveShadow = true
+torus[2].receiveShadow = true
+torus[3].receiveShadow = true
+torus[4].receiveShadow = true
 
 scene.add(torus[0])
 scene.add(torus[1])
