@@ -120,26 +120,26 @@ function updateMaterial() {
     material.needsUpdate = true
 }
 
-// const planeData = {
-//     width: 3.6,
-//     height: 1.8,
-//     widthSegments: 1,
-//     heightSegments: 1
-// };
-// const planePropertiesFolder = gui.addFolder("PlaneGeometry")
-// //planePropertiesFolder.add(planeData, 'width', 1, 30).onChange(regeneratePlaneGeometry)
-// //planePropertiesFolder.add(planeData, 'height', 1, 30).onChange(regeneratePlaneGeometry)
-// planePropertiesFolder.add(planeData, 'widthSegments', 1, 360).onChange(regeneratePlaneGeometry)
-// planePropertiesFolder.add(planeData, 'heightSegments', 1, 180).onChange(regeneratePlaneGeometry)
-// planePropertiesFolder.open()
+const planeData = {
+    width: 3.6,
+    height: 1.8,
+    widthSegments: 1,
+    heightSegments: 1
+};
+const planePropertiesFolder = gui.addFolder("PlaneGeometry")
+//planePropertiesFolder.add(planeData, 'width', 1, 30).onChange(regeneratePlaneGeometry)
+//planePropertiesFolder.add(planeData, 'height', 1, 30).onChange(regeneratePlaneGeometry)
+planePropertiesFolder.add(planeData, 'widthSegments', 1, 360).onChange(regeneratePlaneGeometry)
+planePropertiesFolder.add(planeData, 'heightSegments', 1, 180).onChange(regeneratePlaneGeometry)
+planePropertiesFolder.open()
 
-// function regeneratePlaneGeometry() {
-//     let newGeometry = new THREE.PlaneGeometry(
-//         planeData.width, planeData.height, planeData.widthSegments, planeData.heightSegments
-//     )
-//     plane.geometry.dispose()
-//     plane.geometry = newGeometry
-// }
+function regeneratePlaneGeometry() {
+    let newGeometry = new THREE.PlaneGeometry(
+        planeData.width, planeData.height, planeData.widthSegments, planeData.heightSegments
+    )
+    plane.geometry.dispose()
+    plane.geometry = newGeometry
+}
 
 function animate() {
     requestAnimationFrame(animate)
