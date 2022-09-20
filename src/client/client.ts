@@ -21,6 +21,7 @@ camera.position.z = 3;
 const renderer = new THREE.WebGLRenderer();
 renderer.physicallyCorrectLights = true;
 renderer.shadowMap.enabled = true;
+renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
