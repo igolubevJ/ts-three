@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { DragControls } from 'three/examples/jsm/controls/DragControls'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
@@ -13,28 +15,51 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshNormalMaterial();
+const material = new THREE.MeshNormalMaterial({ transparent: true });
 
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
-const controls = new TransformControls(camera, renderer.domElement);
-controls.attach(cube);
-scene.add(controls);
+const orbitControls = new OrbitControls(camera, renderer.domElement);
+
+enum TransformControlsMode {
+  Translate = 'translate',
+  Rotate = 'rotate',
+  Scale = 'scale'
+};
+
+const transformControls = new TransformControls(camera, renderer.domElement);
+transformControls.attach(cube);
+transformControls.setMode(TransformControlsMode.Rotate);
+scene.add(transformControls);
+
+transformControls.addEventListener('dragging-changed', function(event) {
+  orbitControls.enabled = !event.value;
+});
 
 window.addEventListener('keydown', function(event) {
-  switch(event.code) {
-    case 'KeyG':
-      controls.setMode('translate');
+  switch(event.key) {
+    case 'g':
+      transformControls.setMode(TransformControlsMode.Translate);
       break;
-    case 'KeyR':
-      controls.setMode('rotate');
+    case 'r':
+      transformControls.setMode(TransformControlsMode.Rotate);
       break;
-    case 'KeyS':
-      controls.setMode('scale');
+    case 's':
+      transformControls.setMode(TransformControlsMode.Scale);
       break;
   }
 });
+
+const backgroundTexture = new THREE.CubeTextureLoader().load([
+  'img/px_eso0932a.jpg',
+    'img/nx_eso0932a.jpg',
+    'img/py_eso0932a.jpg',
+    'img/ny_eso0932a.jpg',
+    'img/pz_eso0932a.jpg',
+    'img/nz_eso0932a.jpg',
+]);
+scene.background = backgroundTexture;
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
