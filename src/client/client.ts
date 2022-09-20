@@ -6,9 +6,9 @@ import Stats from 'three/examples/jsm/libs/stats.module';
 const scene = new THREE.Scene();
 scene.add(new THREE.AxesHelper(5));
 
-const light = new THREE.PointLight();
-light.position.set(0, 7.5, 15);
-scene.add(light);
+// const light = new THREE.PointLight();
+// light.position.set(0, 7.5, 15);
+// scene.add(light);
 
 // const light = new THREE.SpotLight();
 // light.position.set(5, 5, 5);
