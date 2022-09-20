@@ -31,6 +31,7 @@ mtlLoader.load(
     objLoader.load(
       'models/monkey.obj',
       (object) => {
+        object.position.x = 1.5;
         scene.add(object);
       },
       (xhr) => {
@@ -41,6 +42,32 @@ mtlLoader.load(
   },
   (xhr) => {
     console.log((xhr.loaded / xhr.total) * 100 + '% loaded mtl monkey')
+  },
+  (err) => {
+    console.log(err)
+  }
+);
+
+mtlLoader.load(
+  'models/monkeyTextured.mtl',
+  (material) => {
+    material.preload();
+
+    const objLoader = new OBJLoader();
+    objLoader.load(
+      'models/monkeyTextured.obj',
+      (object) => {
+        object.position.x = -1.5;
+        scene.add(object);
+      },
+      (xhr) => {
+        console.log(((xhr.loaded / xhr.total) * 100 )+ '% loaded obj monkey textured');
+      },
+      (err) => console.log(err)
+    )
+  },
+  (xhr) => {
+    console.log((xhr.loaded / xhr.total) * 100 + '% loaded mtl monkey textured')
   },
   (err) => {
     console.log(err)
