@@ -59,6 +59,8 @@ loader.load(
     animationActions.push(animationAction);
     animationFolder.add(animations, 'default');
     scene.add(object);
+
+    
   },
   (xhr) => console.log('loaded'), 
   (err) => console.log(err)
