@@ -8,7 +8,7 @@ const scene = new THREE.Scene();
 scene.add(new THREE.AxesHelper(5));
 
 const light = new THREE.PointLight();
-light.position.set(2.5, 7.5, 15);
+light.position.set(0, 7.5, 15);
 scene.add(light);
 
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
