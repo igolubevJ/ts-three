@@ -1,19 +1,17 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
 const scene = new THREE.Scene();
 scene.add(new THREE.AxesHelper(5));
 
-// const light = new THREE.PointLight();
-// light.position.set(0, 7.5, 15);
-// scene.add(light);
+const light = new THREE.PointLight();
+light.position.set(0.8, 1.4, 1.0);
+scene.add(light);
 
-// const light = new THREE.SpotLight();
-// light.position.set(5, 5, 5);
-// scene.add(light);
+const ambientLight = new THREE.AmbientLight();
+scene.add(ambientLight);
 
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
 camera.position.z = 3;
@@ -25,34 +23,30 @@ renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-new OrbitControls(camera, renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.target.set(0, 1, 0);
 
-const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath('js/libs/draco/');
+const material = new THREE.MeshNormalMaterial();
 
-const loader = new GLTFLoader();
-loader.setDRACOLoader(dracoLoader);
+const loader = new FBXLoader();
 loader.load(
-  'models/monkey_compressed.glb',
-  function (gltf) {
-    gltf.scene.traverse(function (child) {
+  'models/The Boss.fbx',
+  (object) => {
+    object.traverse(function(child) {
       if ((child as THREE.Mesh).isMesh) {
-        const m = <THREE.Mesh>child;
-        m.receiveShadow = true;
-        m.castShadow = true;
-      }
+        (child as THREE.Mesh).material = material;
 
-      if ((child as THREE.Light).isLight) {
-        const l = <THREE.Light>child;
-        l.castShadow = true;
-        l.shadow.bias = -0.003;
-        l.shadow.mapSize.width = 2048;
-        l.shadow.mapSize.height = 2048;
+        if ((child as THREE.Mesh).material) {
+          ((child as THREE.Mesh).material as THREE.MeshBasicMaterial).transparent = false; 
+        }
       }
     });
-    scene.add(gltf.scene);
+
+    object.scale.set(0.01, 0.01, 0.01);
+    scene.add(object);
   },
-  (xhr) => console.log(((xhr.loaded / xhr.total) * 100) + '% loaded'),
+  (xhr) => console.log('loaded'), 
   (err) => console.log(err)
 );
 
@@ -79,6 +73,8 @@ document.body.appendChild(stats.dom);
 
 function animate() {
   requestAnimationFrame(animate);
+
+  controls.update();
 
   render();
 
