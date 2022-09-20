@@ -25,7 +25,13 @@ const objLoader = new OBJLoader();
 objLoader.load(
   'models/cube.obj', 
   (object) => {
-    (<THREE.Mesh>object.children[0]).material = material;
+    // (<THREE.Mesh>object.children[0]).material = material;
+    object.traverse(function (child) {
+      if ((<THREE.Mesh>child).isMesh) {
+        (<THREE.Mesh>child).material = material;
+      }
+    });
+
     scene.add(object);
   },
   (xhr) => {
