@@ -18,6 +18,10 @@ const material = new THREE.MeshNormalMaterial();
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
+const controls = new TransformControls(camera, renderer.domElement);
+controls.attach(cube);
+scene.add(controls);
+
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
