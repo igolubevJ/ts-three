@@ -37,6 +37,8 @@ cubes[1].position.x = 0;
 cubes[2].position.x = 2;
 cubes.forEach(c => scene.add(c));
 
+const controls = new DragControls(cubes, camera, renderer.domElement);
+
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
