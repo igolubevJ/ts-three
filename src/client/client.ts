@@ -28,6 +28,7 @@ mtlLoader.load(
     materials.preload();
 
     const objLoader = new OBJLoader();
+    objLoader.setMaterials(materials);
     objLoader.load(
       'models/monkey.obj',
       (object) => {
@@ -54,6 +55,7 @@ mtlLoader.load(
     material.preload();
 
     const objLoader = new OBJLoader();
+    objLoader.setMaterials(material);
     objLoader.load(
       'models/monkeyTextured.obj',
       (object) => {
