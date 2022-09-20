@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { DragControls } from 'three/examples/jsm/controls/DragControls'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
@@ -18,23 +20,6 @@ const material = new THREE.MeshNormalMaterial();
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
-const controls = new TransformControls(camera, renderer.domElement);
-controls.attach(cube);
-scene.add(controls);
-
-window.addEventListener('keydown', function(event) {
-  switch(event.code) {
-    case 'KeyG':
-      controls.setMode('translate');
-      break;
-    case 'KeyR':
-      controls.setMode('rotate');
-      break;
-    case 'KeyS':
-      controls.setMode('scale');
-      break;
-  }
-});
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
