@@ -15,7 +15,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshNormalMaterial();
+const material = new THREE.MeshNormalMaterial({ transparent: true });
 
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
@@ -23,7 +23,14 @@ scene.add(cube);
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 
 const dragControls = new DragControls([cube], camera, renderer.domElement);
-
+dragControls.addEventListener('dragstart', function(event) {
+  orbitControls.enabled = false;
+  event.object.material.opacity = 0.33;
+});
+dragControls.addEventListener('dragend', function(event) {
+  orbitControls.enabled = true;
+  event.object.material.opacity = 1;
+});
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
