@@ -24,11 +24,40 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.target.set(0, 1, 0);
 
+let mixer: THREE.AnimationMixer;
+let modelReady = false;
+const animationActions: THREE.AnimationAction[] = [];
+let activeAction: THREE.AnimationAction;
+let lastAction: THREE.AnimationAction;
+
+const animations = {
+  default: function () {
+    setAction(animationActions[0]);
+  }
+}
+
+function setAction(toAction: THREE.AnimationAction) {
+  if (toAction !== activeAction) {
+    lastAction = activeAction;
+    activeAction = toAction;
+    lastAction.stop();
+    activeAction.reset();
+    activeAction.play();
+  }
+}
+
 const loader = new FBXLoader();
 loader.load(
   'models/eve.fbx',
   (object) => {
     object.scale.set(0.01, 0.01, 0.01);
+    mixer = new THREE.AnimationMixer(object);
+
+    const animationAction = mixer.clipAction(
+      (<THREE.Object3D>object).animations[0]
+    );
+    animationActions.push(animationAction);
+    animationFolder.add(animations, 'default');
     scene.add(object);
   },
   (xhr) => console.log('loaded'), 
@@ -48,11 +77,16 @@ document.body.appendChild(stats.dom);
 
 const gui = new GUI();
 const animationFolder = gui.addFolder("Animation");
+animationFolder.open();
+
+const clock = new THREE.Clock();
 
 function animate() {
   requestAnimationFrame(animate);
 
   controls.update();
+
+  if (modelReady) mixer.update(clock.getDelta());
 
   render();
 
