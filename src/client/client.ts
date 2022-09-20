@@ -1,79 +1,54 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
 const scene = new THREE.Scene();
 scene.add(new THREE.AxesHelper(5));
 
-const light = new THREE.PointLight();
-light.position.set(0, 7.5, 15);
-scene.add(light);
+// const light = new THREE.PointLight();
+// light.position.set(0, 7.5, 15);
+// scene.add(light);
+
+// const light = new THREE.SpotLight();
+// light.position.set(5, 5, 5);
+// scene.add(light);
 
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
 camera.position.z = 3;
 
 const renderer = new THREE.WebGLRenderer();
+renderer.physicallyCorrectLights = true;
+renderer.shadowMap.enabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 new OrbitControls(camera, renderer.domElement);
 
-const mtlLoader = new MTLLoader();
+const loader = new GLTFLoader();
+loader.load(
+  'models/monkey.glb',
+  function (gltf) {
+    gltf.scene.traverse(function (child) {
+      if ((child as THREE.Mesh).isMesh) {
+        const m = child as THREE.Mesh;
+        m.receiveShadow = true;
+        m.castShadow = true;
+      }
 
-mtlLoader.load(
-  'models/monkey.mtl',
-  (materials) => {
-    materials.preload();
+      if((child as THREE.Light).isLight) {
+        const l = child as THREE.Light;
+        l.castShadow = true;
+        l.shadow.bias = -0.003;
+        l.shadow.mapSize.width = 2048;
+        l.shadow.mapSize.height = 2048;
+      }
+    });
 
-    const objLoader = new OBJLoader();
-    objLoader.setMaterials(materials);
-    objLoader.load(
-      'models/monkey.obj',
-      (object) => {
-        object.position.x = 1.5;
-        scene.add(object);
-      },
-      (xhr) => {
-        console.log(((xhr.loaded / xhr.total) * 100 )+ '% loaded obj monkey');
-      },
-      (err) => console.log(err)
-    );
+    scene.add(gltf.scene);
   },
-  (xhr) => {
-    console.log((xhr.loaded / xhr.total) * 100 + '% loaded mtl monkey')
-  },
-  (err) => {
-    console.log(err)
-  }
-);
-
-mtlLoader.load(
-  'models/monkeyTextured.mtl',
-  (material) => {
-    material.preload();
-
-    const objLoader = new OBJLoader();
-    objLoader.setMaterials(material);
-    objLoader.load(
-      'models/monkeyTextured.obj',
-      (object) => {
-        object.position.x = -1.5;
-        scene.add(object);
-      },
-      (xhr) => {
-        console.log(((xhr.loaded / xhr.total) * 100 )+ '% loaded obj monkey textured');
-      },
-      (err) => console.log(err)
-    )
-  },
-  (xhr) => {
-    console.log((xhr.loaded / xhr.total) * 100 + '% loaded mtl monkey textured')
-  },
-  (err) => {
-    console.log(err)
-  }
+  (xhr) => console.log(((xhr.loaded / xhr.total) * 100) + '% loaded'),
+  (err) => console.log(err)
 );
 
 
