@@ -23,7 +23,7 @@ const material = new THREE.MeshBasicMaterial({ color: 0xe57c92, wireframe: true 
 
 const objLoader = new OBJLoader();
 objLoader.load(
-  'models/cube.obj', 
+  'models/monkey.obj', 
   (object) => {
     // (<THREE.Mesh>object.children[0]).material = material;
     object.traverse(function (child) {
