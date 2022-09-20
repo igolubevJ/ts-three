@@ -19,14 +19,14 @@ renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
 
 const menuPanel = document.getElementById('menuPanel') as HTMLDivElement
-// const startButton = document.getElementById('startButton') as HTMLInputElement
-// startButton.addEventListener(
-//     'click',
-//     function () {
-//         controls.lock()
-//     },
-//     false
-// )
+const startButton = document.getElementById('startButton') as HTMLInputElement
+startButton.addEventListener(
+    'click',
+    function () {
+        controls.lock()
+    },
+    false
+)
 
 const controls = new PointerLockControls(camera, renderer.domElement)
 // controls.addEventListener('change', () => console.log("Controls Change"))
