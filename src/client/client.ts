@@ -36,6 +36,10 @@ loader.load(
     object.traverse(function(child) {
       if ((child as THREE.Mesh).isMesh) {
         (child as THREE.Mesh).material = material;
+
+        if ((child as THREE.Mesh).material) {
+          ((child as THREE.Mesh).material as THREE.MeshBasicMaterial).transparent = false; 
+        }
       }
     });
 
