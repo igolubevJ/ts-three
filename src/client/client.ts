@@ -27,6 +27,16 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.target.set(0, 1, 0);
 
+const loader = new FBXLoader();
+loader.load(
+  'models/The Boss.fbx',
+  (object) => {
+    scene.add(object);
+  },
+  (xhr) => console.log('loaded'), 
+  (err) => console.log(err)
+);
+
 const backgroundTexture = new THREE.CubeTextureLoader().load([
   'img/px_eso0932a.jpg',
   'img/nx_eso0932a.jpg',
