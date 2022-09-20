@@ -1,7 +1,5 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { DragControls } from 'three/examples/jsm/controls/DragControls'
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
 const scene = new THREE.Scene();
@@ -14,42 +12,8 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshNormalMaterial({ transparent: true });
+new OrbitControls(camera, renderer.domElement);
 
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
-
-const orbitControls = new OrbitControls(camera, renderer.domElement);
-
-enum TransformControlsMode {
-  Translate = 'translate',
-  Rotate = 'rotate',
-  Scale = 'scale'
-};
-
-const transformControls = new TransformControls(camera, renderer.domElement);
-transformControls.attach(cube);
-transformControls.setMode(TransformControlsMode.Rotate);
-scene.add(transformControls);
-
-transformControls.addEventListener('dragging-changed', function(event) {
-  orbitControls.enabled = !event.value;
-});
-
-window.addEventListener('keydown', function(event) {
-  switch(event.key) {
-    case 'g':
-      transformControls.setMode(TransformControlsMode.Translate);
-      break;
-    case 'r':
-      transformControls.setMode(TransformControlsMode.Rotate);
-      break;
-    case 's':
-      transformControls.setMode(TransformControlsMode.Scale);
-      break;
-  }
-});
 
 const backgroundTexture = new THREE.CubeTextureLoader().load([
   'img/px_eso0932a.jpg',
