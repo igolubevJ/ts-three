@@ -31,6 +31,7 @@ const loader = new FBXLoader();
 loader.load(
   'models/The Boss.fbx',
   (object) => {
+    object.scale.set(0.01, 0.01, 0.01);
     scene.add(object);
   },
   (xhr) => console.log('loaded'), 
