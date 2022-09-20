@@ -22,6 +22,20 @@ const controls = new TransformControls(camera, renderer.domElement);
 controls.attach(cube);
 scene.add(controls);
 
+window.addEventListener('keydown', function(event) {
+  switch(event.code) {
+    case 'KeyG':
+      controls.setMode('translate');
+      break;
+    case 'KeyR':
+      controls.setMode('rotate');
+      break;
+    case 'KeyS':
+      controls.setMode('scale');
+      break;
+  }
+});
+
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
