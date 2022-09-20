@@ -33,6 +33,10 @@ transformControls.attach(cube);
 transformControls.setMode(TransformControlsMode.Rotate);
 scene.add(transformControls);
 
+transformControls.addEventListener('dragging-changed', function(event) {
+  orbitControls.enabled = !event.value;
+});
+
 const backgroundTexture = new THREE.CubeTextureLoader().load([
   'img/px_eso0932a.jpg',
     'img/nx_eso0932a.jpg',
