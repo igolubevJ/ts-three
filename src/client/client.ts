@@ -1,11 +1,14 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { DragControls } from 'three/examples/jsm/controls/DragControls'
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
 const scene = new THREE.Scene();
 scene.add(new THREE.AxesHelper(5));
+
+const light = new THREE.PointLight();
+light.position.set(2.5, 7.5, 15);
+scene.add(light);
 
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
 camera.position.z = 3;
@@ -14,42 +17,42 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshNormalMaterial({ transparent: true });
+new OrbitControls(camera, renderer.domElement);
 
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+const material = new THREE.MeshBasicMaterial({ color: 0xe57c92, wireframe: true });
 
-const orbitControls = new OrbitControls(camera, renderer.domElement);
+const objLoader = new OBJLoader();
+objLoader.load(
+  'models/monkey.obj', 
+  (object) => {
+    // (<THREE.Mesh>object.children[0]).material = material;
+    object.traverse(function (child) {
+      if ((<THREE.Mesh>child).isMesh) {
+        (<THREE.Mesh>child).material = material;
+      }
+    });
 
-enum TransformControlsMode {
-  Translate = 'translate',
-  Rotate = 'rotate',
-  Scale = 'scale'
-};
+    scene.add(object);
+  },
+  (xhr) => {
+    console.log(((xhr.loaded / xhr.total) * 100) + ' % loaded monkey');
+  },
+  (err) => {
+    console.log(err);
+  });
 
-const transformControls = new TransformControls(camera, renderer.domElement);
-transformControls.attach(cube);
-transformControls.setMode(TransformControlsMode.Rotate);
-scene.add(transformControls);
-
-transformControls.addEventListener('dragging-changed', function(event) {
-  orbitControls.enabled = !event.value;
-});
-
-window.addEventListener('keydown', function(event) {
-  switch(event.key) {
-    case 'g':
-      transformControls.setMode(TransformControlsMode.Translate);
-      break;
-    case 'r':
-      transformControls.setMode(TransformControlsMode.Rotate);
-      break;
-    case 's':
-      transformControls.setMode(TransformControlsMode.Scale);
-      break;
-  }
-});
+objLoader.load(
+  'models/cube.obj',
+  (object) => {
+    object.position.x = -3;
+    scene.add(object);
+  },
+  (xhr) => {
+    console.log(((xhr.loaded / xhr.total) * 100) + ' % loaded cube');
+  },
+  (err) => {
+    console.log(err);
+  });
 
 const backgroundTexture = new THREE.CubeTextureLoader().load([
   'img/px_eso0932a.jpg',
