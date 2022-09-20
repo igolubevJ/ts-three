@@ -19,7 +19,7 @@ document.body.appendChild(renderer.domElement);
 
 new OrbitControls(camera, renderer.domElement);
 
-const material = new THREE.MeshBasicMaterial({ color: 0xe57c92 });
+const material = new THREE.MeshBasicMaterial({ color: 0xe57c92, wireframe: true });
 
 const objLoader = new OBJLoader();
 objLoader.load(
