@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
 const scene = new THREE.Scene();
@@ -19,62 +18,6 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 new OrbitControls(camera, renderer.domElement);
-
-const mtlLoader = new MTLLoader();
-
-mtlLoader.load(
-  'models/monkey.mtl',
-  (materials) => {
-    materials.preload();
-
-    const objLoader = new OBJLoader();
-    objLoader.setMaterials(materials);
-    objLoader.load(
-      'models/monkey.obj',
-      (object) => {
-        object.position.x = 1.5;
-        scene.add(object);
-      },
-      (xhr) => {
-        console.log(((xhr.loaded / xhr.total) * 100 )+ '% loaded obj monkey');
-      },
-      (err) => console.log(err)
-    );
-  },
-  (xhr) => {
-    console.log((xhr.loaded / xhr.total) * 100 + '% loaded mtl monkey')
-  },
-  (err) => {
-    console.log(err)
-  }
-);
-
-mtlLoader.load(
-  'models/monkeyTextured.mtl',
-  (material) => {
-    material.preload();
-
-    const objLoader = new OBJLoader();
-    objLoader.setMaterials(material);
-    objLoader.load(
-      'models/monkeyTextured.obj',
-      (object) => {
-        object.position.x = -1.5;
-        scene.add(object);
-      },
-      (xhr) => {
-        console.log(((xhr.loaded / xhr.total) * 100 )+ '% loaded obj monkey textured');
-      },
-      (err) => console.log(err)
-    )
-  },
-  (xhr) => {
-    console.log((xhr.loaded / xhr.total) * 100 + '% loaded mtl monkey textured')
-  },
-  (err) => {
-    console.log(err)
-  }
-);
 
 
 const backgroundTexture = new THREE.CubeTextureLoader().load([
