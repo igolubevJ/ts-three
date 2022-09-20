@@ -49,8 +49,10 @@ function setAction(toAction: THREE.AnimationAction) {
   if (toAction !== activeAction) {
     lastAction = activeAction;
     activeAction = toAction;
-    lastAction.stop();
+    // lastAction.stop();
+    lastAction.fadeOut(1);
     activeAction.reset();
+    activeAction.fadeIn(1);
     activeAction.play();
   }
 }
