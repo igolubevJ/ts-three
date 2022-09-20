@@ -22,6 +22,8 @@ scene.add(cube);
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 
+const dragControls = new DragControls([cube], camera, renderer.domElement);
+
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
