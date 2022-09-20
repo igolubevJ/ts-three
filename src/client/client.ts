@@ -19,6 +19,16 @@ document.body.appendChild(renderer.domElement);
 
 new OrbitControls(camera, renderer.domElement);
 
+const loader = new GLTFLoader();
+loader.load(
+  'models/monkey.glb',
+  function (gltf) {
+    scene.add(gltf.scene);
+  },
+  (xhr) => console.log(((xhr.loaded / xhr.total) * 100) + '% loaded'),
+  (err) => console.log(err)
+);
+
 
 const backgroundTexture = new THREE.CubeTextureLoader().load([
   'img/px_eso0932a.jpg',
