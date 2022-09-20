@@ -19,10 +19,13 @@ document.body.appendChild(renderer.domElement);
 
 new OrbitControls(camera, renderer.domElement);
 
+const material = new THREE.MeshBasicMaterial({ color: 0xe57c92 });
+
 const objLoader = new OBJLoader();
 objLoader.load(
   'models/cube.obj', 
   (object) => {
+    (<THREE.Mesh>object.children[0]).material = material;
     scene.add(object);
   },
   (xhr) => {
