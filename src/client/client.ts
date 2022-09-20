@@ -20,6 +20,8 @@ const material = new THREE.MeshNormalMaterial();
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
+const orbitControls = new OrbitControls(camera, renderer.domElement);
+
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
