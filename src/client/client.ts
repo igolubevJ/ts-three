@@ -37,6 +37,20 @@ transformControls.addEventListener('dragging-changed', function(event) {
   orbitControls.enabled = !event.value;
 });
 
+window.addEventListener('keydown', function(event) {
+  switch(event.key) {
+    case 'g':
+      transformControls.setMode(TransformControlsMode.Translate);
+      break;
+    case 'r':
+      transformControls.setMode(TransformControlsMode.Rotate);
+      break;
+    case 's':
+      transformControls.setMode(TransformControlsMode.Scale);
+      break;
+  }
+});
+
 const backgroundTexture = new THREE.CubeTextureLoader().load([
   'img/px_eso0932a.jpg',
     'img/nx_eso0932a.jpg',
