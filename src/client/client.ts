@@ -35,7 +35,20 @@ objLoader.load(
     scene.add(object);
   },
   (xhr) => {
-    console.log(((xhr.loaded / xhr.total) * 100) + ' % loaded');
+    console.log(((xhr.loaded / xhr.total) * 100) + ' % loaded monkey');
+  },
+  (err) => {
+    console.log(err);
+  });
+
+objLoader.load(
+  'models/cube.obj',
+  (object) => {
+    object.position.x = -3;
+    scene.add(object);
+  },
+  (xhr) => {
+    console.log(((xhr.loaded / xhr.total) * 100) + ' % loaded cube');
   },
   (err) => {
     console.log(err);
