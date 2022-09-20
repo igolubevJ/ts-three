@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
 const scene = new THREE.Scene();
@@ -18,6 +19,18 @@ document.body.appendChild(renderer.domElement);
 
 new OrbitControls(camera, renderer.domElement);
 
+const objLoader = new OBJLoader();
+objLoader.load(
+  'models/cube.obj', 
+  (object) => {
+    scene.add(object);
+  },
+  (xhr) => {
+    console.log(((xhr.loaded / xhr.total) * 100) + ' % loaded');
+  },
+  (err) => {
+    console.log(err);
+  });
 
 const backgroundTexture = new THREE.CubeTextureLoader().load([
   'img/px_eso0932a.jpg',
