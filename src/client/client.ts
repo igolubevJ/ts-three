@@ -2,24 +2,21 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import Stats from 'three/examples/jsm/libs/stats.module';
+import { GUI } from 'dat.gui';
 
 const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87b8ce);
 scene.add(new THREE.AxesHelper(5));
 
 const light = new THREE.PointLight();
-light.position.set(0.8, 1.4, 1.0);
+light.position.set(2.5, 7.5, 15);
+light.intensity = 2.5;
 scene.add(light);
 
-const ambientLight = new THREE.AmbientLight();
-scene.add(ambientLight);
-
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.z = 3;
+camera.position.set(0.8, 1.4, 1.0);
 
 const renderer = new THREE.WebGLRenderer();
-renderer.physicallyCorrectLights = true;
-renderer.shadowMap.enabled = true;
-renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -27,38 +24,92 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.target.set(0, 1, 0);
 
-const material = new THREE.MeshNormalMaterial();
+let mixer: THREE.AnimationMixer;
+let modelReady = false;
+const animationActions: THREE.AnimationAction[] = [];
+let activeAction: THREE.AnimationAction;
+let lastAction: THREE.AnimationAction;
+
+const animations = {
+  default: function () {
+    setAction(animationActions[0]);
+  },
+  angry: function () {
+    setAction(animationActions[1]);
+  },
+  clapping: function () {
+    setAction(animationActions[2]);
+  }, 
+  dancing: function () {
+    setAction(animationActions[3]);
+  }
+}
+
+function setAction(toAction: THREE.AnimationAction) {
+  if (toAction !== activeAction) {
+    lastAction = activeAction;
+    activeAction = toAction;
+    // lastAction.stop();
+    lastAction.fadeOut(1);
+    activeAction.reset();
+    activeAction.fadeIn(1);
+    activeAction.play();
+  }
+}
 
 const loader = new FBXLoader();
 loader.load(
-  'models/The Boss.fbx',
+  'models/eve.fbx',
   (object) => {
-    object.traverse(function(child) {
-      if ((child as THREE.Mesh).isMesh) {
-        (child as THREE.Mesh).material = material;
+    object.scale.set(0.01, 0.01, 0.01);
+    mixer = new THREE.AnimationMixer(object);
 
-        if ((child as THREE.Mesh).material) {
-          ((child as THREE.Mesh).material as THREE.MeshBasicMaterial).transparent = false; 
-        }
-      }
+    const animationAction = mixer.clipAction(
+      (<THREE.Object3D>object).animations[0]
+    );
+    animationActions.push(animationAction);
+    animationFolder.add(animations, 'default');
+    activeAction = animationActions[0];
+    scene.add(object);
+
+    // add an animation from another file
+    loader.load('models/Angry.fbx', (object) => {
+      console.log("Load Angry");
+
+      const animationAction = mixer.clipAction(
+        (<THREE.Object3D>object).animations[0]
+      );
+      animationActions.push(animationAction);
+      animationFolder.add(animations, "angry");
+
+      loader.load('models/Clapping.fbx', (object) => {
+        console.log("Load Clapping");
+
+        const animationAction = mixer.clipAction(
+          (<THREE.Object3D>object).animations[0]
+        );
+        animationActions.push(animationAction);
+        animationFolder.add(animations, "clapping");
+
+        loader.load('models/Silly Dancing.fbx', (object) => {
+          console.log("Load Silly Dancing");
+
+          const animationAction = mixer.clipAction(
+            (<THREE.Object3D>object).animations[0]
+          );
+          animationActions.push(animationAction);
+          animationFolder.add(animations, "dancing");
+
+          modelReady = true;
+        })
+      });
     });
 
-    object.scale.set(0.01, 0.01, 0.01);
-    scene.add(object);
+
   },
   (xhr) => console.log('loaded'), 
   (err) => console.log(err)
 );
-
-const backgroundTexture = new THREE.CubeTextureLoader().load([
-  'img/px_eso0932a.jpg',
-  'img/nx_eso0932a.jpg',
-  'img/py_eso0932a.jpg',
-  'img/ny_eso0932a.jpg',
-  'img/pz_eso0932a.jpg',
-  'img/nz_eso0932a.jpg',
-]);
-scene.background = backgroundTexture;
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
@@ -71,10 +122,18 @@ function onWindowResize() {
 const stats = Stats();
 document.body.appendChild(stats.dom);
 
+const gui = new GUI();
+const animationFolder = gui.addFolder("Animation");
+animationFolder.open();
+
+const clock = new THREE.Clock();
+
 function animate() {
   requestAnimationFrame(animate);
 
   controls.update();
+
+  if (modelReady) mixer.update(clock.getDelta());
 
   render();
 
