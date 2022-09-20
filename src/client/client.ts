@@ -33,6 +33,15 @@ let lastAction: THREE.AnimationAction;
 const animations = {
   default: function () {
     setAction(animationActions[0]);
+  },
+  angry: function () {
+    setAction(animationActions[1]);
+  },
+  clapping: function () {
+    setAction(animationActions[2]);
+  }, 
+  dancing: function () {
+    setAction(animationActions[3]);
   }
 }
 
@@ -58,9 +67,43 @@ loader.load(
     );
     animationActions.push(animationAction);
     animationFolder.add(animations, 'default');
+    activeAction = animationActions[0];
     scene.add(object);
 
-    
+    // add an animation from another file
+    loader.load('models/Angry.fbx', (object) => {
+      console.log("Load Angry");
+
+      const animationAction = mixer.clipAction(
+        (<THREE.Object3D>object).animations[0]
+      );
+      animationActions.push(animationAction);
+      animationFolder.add(animations, "angry");
+
+      loader.load('models/Clapping.fbx', (object) => {
+        console.log("Load Clapping");
+
+        const animationAction = mixer.clipAction(
+          (<THREE.Object3D>object).animations[0]
+        );
+        animationActions.push(animationAction);
+        animationFolder.add(animations, "clapping");
+
+        loader.load('models/Silly Dancing.fbx', (object) => {
+          console.log("Load Silly Dancing");
+
+          const animationAction = mixer.clipAction(
+            (<THREE.Object3D>object).animations[0]
+          );
+          animationActions.push(animationAction);
+          animationFolder.add(animations, "dancing");
+
+          modelReady = true;
+        })
+      });
+    });
+
+
   },
   (xhr) => console.log('loaded'), 
   (err) => console.log(err)
