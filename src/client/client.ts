@@ -22,15 +22,16 @@ scene.add(cube);
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 
-const dragControls = new DragControls([cube], camera, renderer.domElement);
-dragControls.addEventListener('dragstart', function(event) {
-  orbitControls.enabled = false;
-  event.object.material.opacity = 0.33;
-});
-dragControls.addEventListener('dragend', function(event) {
-  orbitControls.enabled = true;
-  event.object.material.opacity = 1;
-});
+enum TransformControlsMode {
+  Translate = 'translate',
+  Rotate = 'rotate',
+  Scale = 'scale'
+};
+
+const transformControls = new TransformControls(camera, renderer.domElement);
+transformControls.attach(cube);
+transformControls.setMode(TransformControlsMode.Rotate);
+scene.add(transformControls);
 
 const backgroundTexture = new THREE.CubeTextureLoader().load([
   'img/px_eso0932a.jpg',
