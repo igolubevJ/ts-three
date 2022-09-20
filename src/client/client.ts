@@ -32,6 +32,16 @@ dragControls.addEventListener('dragend', function(event) {
   event.object.material.opacity = 1;
 });
 
+const backgroundTexture = new THREE.CubeTextureLoader().load([
+  'img/px_eso0932a.jpg',
+    'img/nx_eso0932a.jpg',
+    'img/py_eso0932a.jpg',
+    'img/ny_eso0932a.jpg',
+    'img/pz_eso0932a.jpg',
+    'img/nz_eso0932a.jpg',
+]);
+scene.background = backgroundTexture;
+
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
