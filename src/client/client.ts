@@ -27,10 +27,18 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.target.set(0, 1, 0);
 
+const material = new THREE.MeshNormalMaterial();
+
 const loader = new FBXLoader();
 loader.load(
   'models/The Boss.fbx',
   (object) => {
+    object.traverse(function(child) {
+      if ((child as THREE.Mesh).isMesh) {
+        (child as THREE.Mesh).material = material;
+      }
+    });
+
     object.scale.set(0.01, 0.01, 0.01);
     scene.add(object);
   },
