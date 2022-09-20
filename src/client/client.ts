@@ -29,9 +29,9 @@ startButton.addEventListener(
 )
 
 const controls = new PointerLockControls(camera, renderer.domElement)
-// controls.addEventListener('change', () => console.log("Controls Change"))
-// controls.addEventListener('lock', () => menuPanel.style.display = 'none')
-// controls.addEventListener('unlock', () => menuPanel.style.display = 'block')
+controls.addEventListener('change', () => console.log("Controls Change"))
+controls.addEventListener('lock', () => menuPanel.style.display = 'none')
+controls.addEventListener('unlock', () => menuPanel.style.display = 'block')
 
 const planeGeometry = new THREE.PlaneGeometry(100, 100, 50, 50)
 const material = new THREE.MeshBasicMaterial({
