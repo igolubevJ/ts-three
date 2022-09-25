@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import Stats from 'three/examples/jsm/libs/stats.module';
-import { GUI } from 'dat.gui';
 
 const scene = new THREE.Scene();
 scene.add(new THREE.AxesHelper(5));
@@ -29,10 +28,6 @@ function onWindowResize() {
 
 const stats = Stats();
 document.body.appendChild(stats.dom);
-
-const gui = new GUI();
-const animationsFolder = gui.addFolder("Animation");
-animationsFolder.open();
 
 const clock = new THREE.Clock();
 
