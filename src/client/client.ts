@@ -30,11 +30,17 @@ let mixer: THREE.AnimationMixer;
 let modelReady = false;
 const animationActions: THREE.AnimationAction[] = [];
 let activeAction: THREE.AnimationAction;
+let lastAction: THREE.AnimationAction
 const gltfLoader = new GLTFLoader();
 
 gltfLoader.load(
   'models/eve.glb',
   (gltf) => {
+    mixer = new THREE.AnimationMixer(gltf.scene);
+
+    const animationAction = mixer.clipAction((<any>gltf).animations[0]);
+    animationActions.push(animationAction);
+    animationsFolder.add(animations, 'default');
 
     scene.add(gltf.scene);
   },
@@ -57,14 +63,45 @@ function onWindowResize() {
 const stats = Stats();
 document.body.appendChild(stats.dom);
 
+const animations = {
+  default: function () {
+    setAction(animationActions[0]);
+  },
+  angry: function () {
+    setAction(animationActions[1]);
+  },
+  clapping: function () {
+    setAction(animationActions[2]);
+  }, 
+  dancing: function () {
+    setAction(animationActions[3]);
+  }
+}
+
+function setAction(toAction: THREE.AnimationAction) {
+  if (toAction !== activeAction) {
+    lastAction = activeAction;
+    activeAction = toAction;
+    //lastAction.stop();
+    lastAction.fadeOut(1);
+    activeAction.reset();
+    activeAction.fadeIn(1);
+    activeAction.play();
+  }
+}
+
 const gui = new GUI();
-const animationFolder = gui.addFolder("Animation");
-animationFolder.open();
+const animationsFolder = gui.addFolder("Animation");
+animationsFolder.open();
+
+const clock = new THREE.Clock();
 
 function animate() {
   requestAnimationFrame(animate);
 
   controls.update();
+
+  if (modelReady) mixer.update(clock.getDelta());
 
   render();
 
