@@ -41,8 +41,29 @@ gltfLoader.load(
     const animationAction = mixer.clipAction((<any>gltf).animations[0]);
     animationActions.push(animationAction);
     animationsFolder.add(animations, 'default');
+    activeAction = animationActions[0];
 
     scene.add(gltf.scene);
+
+    // add animations another file
+    gltfLoader.load(
+      'models/eve-angry.glb',
+      (gltf) => {
+        const animationAction = mixer.clipAction(
+          (<any>gltf).animations[0]
+        );
+        animationActions.push(animationAction);
+        animationsFolder.add(animations, "angry");
+
+        modelReady = true;
+      },
+      (xhr) => {
+        console.log((xhr.loaded / xhr.total) * 100 + '% loaded angry');
+      },
+      (err) => {
+        console.log(err);
+      }
+    )
   },
   (xhr) => {
     console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
