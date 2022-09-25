@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { GUI } from 'dat.gui';
 
-const scene = new THREE.Scene();``
+const scene = new THREE.Scene();
 scene.add(new THREE.AxesHelper(5));
 
 const light1 = new THREE.PointLight();
@@ -25,6 +25,26 @@ document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.target.set(0, 1, 0);
+
+let mixer: THREE.AnimationMixer;
+let modelReady = false;
+const animationActions: THREE.AnimationAction[] = [];
+let activeAction: THREE.AnimationAction;
+const gltfLoader = new GLTFLoader();
+
+gltfLoader.load(
+  'models/eve.glb',
+  (gltf) => {
+
+    scene.add(gltf.scene);
+  },
+  (xhr) => {
+    console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
+  },
+  (err) => {
+    console.log(err);
+  }
+)
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
