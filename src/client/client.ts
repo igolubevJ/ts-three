@@ -1,17 +1,19 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { GUI } from 'dat.gui';
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x87b8ce);
 scene.add(new THREE.AxesHelper(5));
 
-const light = new THREE.PointLight();
-light.position.set(2.5, 7.5, 15);
-light.intensity = 2.5;
-scene.add(light);
+const light1 = new THREE.PointLight();
+light1.position.set(2.5, 2.5, 2.5);
+scene.add(light1);
+
+const light2 = new THREE.PointLight();
+light2.position.set(-2.5, 2.5, 2.5);
+scene.add(light2);
 
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
 camera.position.set(0.8, 1.4, 1.0);
@@ -28,7 +30,76 @@ let mixer: THREE.AnimationMixer;
 let modelReady = false;
 const animationActions: THREE.AnimationAction[] = [];
 let activeAction: THREE.AnimationAction;
-let lastAction: THREE.AnimationAction;
+let lastAction: THREE.AnimationAction
+const gltfLoader = new GLTFLoader();
+
+gltfLoader.load(
+  'models/eve.glb',
+  (gltf) => {
+    mixer = new THREE.AnimationMixer(gltf.scene);
+
+    const animationAction = mixer.clipAction((<any>gltf).animations[0]);
+    animationActions.push(animationAction);
+    animationsFolder.add(animations, 'default');
+    activeAction = animationActions[0];
+
+    scene.add(gltf.scene);
+
+    // add animations another file
+    gltfLoader.load(
+      'models/eve-angry.glb',
+      (gltf) => {
+        const animationAction = mixer.clipAction(
+          (<any>gltf).animations[0]
+        );
+        animationActions.push(animationAction);
+        animationsFolder.add(animations, "angry");
+
+        gltfLoader.load(
+          'models/eve-clapping.glb',
+          (gltf) => {
+            const animationAction = mixer.clipAction(
+              (<any>gltf).animations[0]
+            );
+            animationActions.push(animationAction);
+            animationsFolder.add(animations, "clapping");
+
+            modelReady = true;
+          },
+          (xhr) => {
+            console.log((xhr.loaded / xhr.total) * 100 + '% loaded clapping');
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      },
+      (xhr) => {
+        console.log((xhr.loaded / xhr.total) * 100 + '% loaded angry');
+      },
+      (err) => {
+        console.log(err);
+      }
+    )
+  },
+  (xhr) => {
+    console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
+  },
+  (err) => {
+    console.log(err);
+  }
+)
+
+window.addEventListener('resize', onWindowResize, false);
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  render();
+}
+
+const stats = Stats();
+document.body.appendChild(stats.dom);
 
 const animations = {
   default: function () {
@@ -49,7 +120,7 @@ function setAction(toAction: THREE.AnimationAction) {
   if (toAction !== activeAction) {
     lastAction = activeAction;
     activeAction = toAction;
-    // lastAction.stop();
+    //lastAction.stop();
     lastAction.fadeOut(1);
     activeAction.reset();
     activeAction.fadeIn(1);
@@ -57,74 +128,9 @@ function setAction(toAction: THREE.AnimationAction) {
   }
 }
 
-const loader = new FBXLoader();
-loader.load(
-  'models/eve.fbx',
-  (object) => {
-    object.scale.set(0.01, 0.01, 0.01);
-    mixer = new THREE.AnimationMixer(object);
-
-    const animationAction = mixer.clipAction(
-      (<THREE.Object3D>object).animations[0]
-    );
-    animationActions.push(animationAction);
-    animationFolder.add(animations, 'default');
-    activeAction = animationActions[0];
-    scene.add(object);
-
-    // add an animation from another file
-    loader.load('models/Angry.fbx', (object) => {
-      console.log("Load Angry");
-
-      const animationAction = mixer.clipAction(
-        (<THREE.Object3D>object).animations[0]
-      );
-      animationActions.push(animationAction);
-      animationFolder.add(animations, "angry");
-
-      loader.load('models/Clapping.fbx', (object) => {
-        console.log("Load Clapping");
-
-        const animationAction = mixer.clipAction(
-          (<THREE.Object3D>object).animations[0]
-        );
-        animationActions.push(animationAction);
-        animationFolder.add(animations, "clapping");
-
-        loader.load('models/Silly Dancing.fbx', (object) => {
-          console.log("Load Silly Dancing");
-
-          const animationAction = mixer.clipAction(
-            (<THREE.Object3D>object).animations[0]
-          );
-          animationActions.push(animationAction);
-          animationFolder.add(animations, "dancing");
-
-          modelReady = true;
-        })
-      });
-    });
-
-
-  },
-  (xhr) => console.log('loaded'), 
-  (err) => console.log(err)
-);
-
-window.addEventListener('resize', onWindowResize, false);
-function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  render();
-}
-
-const stats = Stats();
-document.body.appendChild(stats.dom);
-
 const gui = new GUI();
-const animationFolder = gui.addFolder("Animation");
-animationFolder.open();
+const animationsFolder = gui.addFolder("Animation");
+animationsFolder.open();
 
 const clock = new THREE.Clock();
 
