@@ -55,7 +55,24 @@ gltfLoader.load(
         animationActions.push(animationAction);
         animationsFolder.add(animations, "angry");
 
-        modelReady = true;
+        gltfLoader.load(
+          'models/eve-clapping.glb',
+          (gltf) => {
+            const animationAction = mixer.clipAction(
+              (<any>gltf).animations[0]
+            );
+            animationActions.push(animationAction);
+            animationsFolder.add(animations, "clapping");
+
+            modelReady = true;
+          },
+          (xhr) => {
+            console.log((xhr.loaded / xhr.total) * 100 + '% loaded clapping');
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
       },
       (xhr) => {
         console.log((xhr.loaded / xhr.total) * 100 + '% loaded angry');
