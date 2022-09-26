@@ -82,7 +82,7 @@ function onMouseMove(event: MouseEvent) {
     // console.log(intersects[0].point);
     const n = new THREE.Vector3();
     n.copy((intersects[0].face as THREE.Face).normal);
-    // n.transformDirection(intersects[0].object.matrixWorld);
+    n.transformDirection(intersects[0].object.matrixWorld);
 
     arrowHelper.setDirection(n);
     arrowHelper.position.copy(intersects[0].point);
@@ -96,6 +96,10 @@ function animate() {
   requestAnimationFrame(animate);
 
   controls.update();
+
+  if (sceneMeshes.length > 1) {
+    sceneMeshes[1].rotation.x += 0.002;
+  }
 
   render();
 
