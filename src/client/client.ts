@@ -7,7 +7,7 @@ const scene = new THREE.Scene();
 scene.add(new THREE.AxesHelper(5));
 
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.z = 4;
+camera.position.z = 2;
 
 const renderer = new THREE.WebGLRenderer();
 renderer.physicallyCorrectLights = true;
@@ -20,6 +20,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
 const raycaster = new THREE.Raycaster();
+const sceneMeshes: THREE.Mesh[] = [];
 
 const gltfLoader = new GLTFLoader();
 
@@ -27,13 +28,15 @@ gltfLoader.load('models/monkey_textured.glb',
   (gltf) => {
     gltf.scene.traverse(function (child) {
       if ((child as THREE.Mesh).isMesh) {
-        const m = child as THREE.Mesh;
+        let m = child as THREE.Mesh;
         m.receiveShadow = true;
         m.castShadow = true;
+        // (m.material as THREE.MeshStandardMaterial).flatShading = true;
+        sceneMeshes.push(m);
       }
 
       if ((child as THREE.Light).isLight) {
-        const l = child as THREE.Light;
+        let l = child as THREE.Light;
         l.castShadow = true;
         l.shadow.bias = -0.003;
         l.shadow.mapSize.width = 2048;
@@ -42,6 +45,7 @@ gltfLoader.load('models/monkey_textured.glb',
     });
 
     scene.add(gltf.scene);
+    // sceneMeshes.push(gltf.scene);
   },
   (xhr) => console.log(((xhr.loaded / xhr.total) * 100) + '% loaded'), 
   (error) => console.log(error)
@@ -58,12 +62,21 @@ function onWindowResize() {
 renderer.domElement.addEventListener('mousemove', onMouseMove, false);
 
 function onMouseMove(event: MouseEvent) {
-  const mouse = {
-    x: (event.clientX / renderer.domElement.clientWidth) * 2 - 1,
-    y: (event.clientY / renderer.domElement.clientHeight) * 2 + 1
-  };
+  const mouse = new THREE.Vector2(); 
+  mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+  mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
 
   // console.log(mouse);
+
+  raycaster.setFromCamera(mouse, camera);
+
+  const intersects = raycaster.intersectObjects(sceneMeshes, false);
+
+  if (intersects.length > 0) {
+    // console.log(`${sceneMeshes.length} ${intersects.length}`);
+    // console.log(intersects[0]);
+    console.log(intersects[0].object.userData.name + " " + intersects[0].distance + " ");
+  }
 }
 
 const stats = Stats();
@@ -80,7 +93,7 @@ function animate() {
 }
 
 function render() {
-  renderer.render(scene, camera)
+  renderer.render(scene, camera);
 }
 
 animate();
