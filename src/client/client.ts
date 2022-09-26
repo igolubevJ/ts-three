@@ -28,8 +28,15 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.target.set(0, 1, 0);
 
-let mixer: THREE.AnimationMixer;
-let modelReady = false;
+const planeGeometry = new THREE.PlaneGeometry(25, 25);
+const texture = new THREE.TextureLoader().load('img/grid.png');
+const plane: THREE.Mesh = new THREE.Mesh(
+  planeGeometry,
+  new THREE.MeshPhongMaterial({ map: texture })
+);
+plane.rotateX(-Math.PI / 2);
+plane.receiveShadow = true;
+scene.add(plane);
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
@@ -49,7 +56,7 @@ function animate() {
 
   controls.update();
 
-  if (modelReady) mixer.update(clock.getDelta());
+  // if (modelReady) mixer.update(clock.getDelta());
 
   render();
 
