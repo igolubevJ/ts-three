@@ -128,7 +128,11 @@ function animate() {
 
   controls.update();
 
-  if (modelReady) mixer.update(clock.getDelta());
+  if (modelReady) {
+    mixer.update(clock.getDelta());
+    modelGroup.position.copy(modelDragBox.position);
+    boxHelper.update();
+  }
 
   render();
 
