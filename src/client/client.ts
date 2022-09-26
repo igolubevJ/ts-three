@@ -79,7 +79,6 @@ function onMouseMove(event: MouseEvent) {
   const intersects = raycaster.intersectObjects(sceneMeshes, false);
 
   if (intersects.length > 0) {
-    // console.log(intersects[0].point);
     const n = new THREE.Vector3();
     n.copy((intersects[0].face as THREE.Face).normal);
     n.transformDirection(intersects[0].object.matrixWorld);
@@ -96,10 +95,6 @@ function animate() {
   requestAnimationFrame(animate);
 
   controls.update();
-
-  if (sceneMeshes.length > 1) {
-    sceneMeshes[1].rotation.x += 0.002;
-  }
 
   render();
 
