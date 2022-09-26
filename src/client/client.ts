@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
 const scene = new THREE.Scene();
@@ -28,9 +29,6 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.target.set(0, 1, 0);
 
-const sceneMeshes: THREE.Mesh[] = [];
-let boxHelper: THREE.BoxHelper;
-
 const planeGeometry = new THREE.PlaneGeometry(25, 25);
 const texture = new THREE.TextureLoader().load('img/grid.png');
 const plane: THREE.Mesh = new THREE.Mesh(
@@ -41,20 +39,52 @@ plane.rotateX(-Math.PI / 2);
 plane.receiveShadow = true;
 scene.add(plane);
 
+const transformControls = new TransformControls(
+  camera, 
+  renderer.domElement
+);
+scene.add(transformControls);
+
+transformControls.addEventListener('mouseDown', function() {
+  controls.enabled = false;
+});
+
+transformControls.addEventListener('mouseUp', function() {
+  controls.enabled = true;
+});
+
+window.addEventListener('keydown', function(event: KeyboardEvent) {
+  switch (event.key) {
+    case 'g':
+      transformControls.setMode('translate');
+      break;
+    case 'r':
+      transformControls.setMode('rotate');
+      break;
+    case 's':
+      transformControls.setMode('scale');
+      break;
+  }
+});
+
 let mixer: THREE.AnimationMixer;
 let modelReady = false;
 const gltfLoader = new GLTFLoader();
-let modelGroup: THREE.Group;
-let modelDragBox: THREE.Mesh;
 
 gltfLoader.load('models/eve.@pounchglb.glb', 
   (gltf) => {
     gltf.scene.traverse(function(child) {
-      
+      if((child as THREE.Mesh).isMesh) {
+        child.castShadow = true;
+        child.frustumCulled = false;
+        (child as THREE.Mesh).geometry.computeVertexNormals();
+      }
     });
 
     mixer = new THREE.AnimationMixer(gltf.scene);
     mixer.clipAction((gltf as any).animations[0]).play();
+
+    transformControls.attach(gltf.scene);
 
     scene.add(gltf.scene);
     modelReady = true;
