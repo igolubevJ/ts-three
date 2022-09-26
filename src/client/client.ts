@@ -16,6 +16,14 @@ renderer.shadowMap.enabled = true;
 renderer.outputEncoding = THREE.sRGBEncoding;
 document.body.appendChild(renderer.domElement);
 
+const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+const points = new Array();
+points.push(new THREE.Vector3(0, 0, 0));
+points.push(new THREE.Vector3(0, 0, 0.25));
+const geometry = new THREE.BufferGeometry().setFromPoints(points);
+const line = new THREE.Line(geometry, material);
+scene.add(line);
+
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
@@ -76,7 +84,11 @@ function onMouseMove(event: MouseEvent) {
     // console.log(`${sceneMeshes.length} ${intersects.length}`);
     // console.log(intersects[0]);
     // console.log(intersects[0].object.userData.name + " " + intersects[0].distance + " ");
-    console.log((intersects[0].face as THREE.Face).normal);
+    // console.log((intersects[0].face as THREE.Face).normal);
+
+    line.position.set(0, 0, 0);
+    line.lookAt((intersects[0].face as THREE.Face).normal);
+    line.position.copy(intersects[0].point);
   }
 }
 
