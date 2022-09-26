@@ -87,6 +87,9 @@ gltfLoader.load('models/eve.@pounchglb.glb',
       }
     });
 
+    mixer = new THREE.AnimationMixer(gltf.scene);
+    mixer.clipAction((gltf as any).animations[0]).play();
+
     modelDragBox = new THREE.Mesh(
       new THREE.BoxGeometry(0.5, 1.3, 0.5),
       new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 })
@@ -125,7 +128,7 @@ function animate() {
 
   controls.update();
 
-  // if (modelReady) mixer.update(clock.getDelta());
+  if (modelReady) mixer.update(clock.getDelta());
 
   render();
 
