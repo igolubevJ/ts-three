@@ -75,6 +75,18 @@ let modelDragBox: THREE.Mesh;
 
 gltfLoader.load('models/eve.@pounchglb.glb', 
   (gltf) => {
+    gltf.scene.traverse(function(child) {
+      if (child instanceof THREE.Group) {
+        modelGroup = child;
+      }
+
+      if ((child as THREE.Mesh).isMesh) {
+        child.castShadow = true;
+        child.frustumCulled = false;
+        (child as THREE.Mesh).geometry.computeVertexNormals();
+      }
+    });
+
     scene.add(gltf.scene);
     modelReady = true;
   },
