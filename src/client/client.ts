@@ -1,22 +1,12 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import Stats from 'three/examples/jsm/libs/stats.module';
-import { GUI } from 'dat.gui';
 
 const scene = new THREE.Scene();
-scene.add(new THREE.AxesHelper(5));
-
-const light1 = new THREE.PointLight();
-light1.position.set(2.5, 2.5, 2.5);
-scene.add(light1);
-
-const light2 = new THREE.PointLight();
-light2.position.set(-2.5, 2.5, 2.5);
-scene.add(light2);
 
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.set(0.8, 1.4, 1.0);
+camera.position.set(4.0, 4.0, 4.0);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -24,71 +14,125 @@ document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.target.set(0, 1, 0);
 
 let mixer: THREE.AnimationMixer;
 let modelReady = false;
-const animationActions: THREE.AnimationAction[] = [];
-let activeAction: THREE.AnimationAction;
-let lastAction: THREE.AnimationAction
+
 const gltfLoader = new GLTFLoader();
+const dropZone = document.getElementById('dropzone') as HTMLDivElement;
 
-gltfLoader.load(
-  'models/eve.glb',
-  (gltf) => {
-    mixer = new THREE.AnimationMixer(gltf.scene);
+dropZone.ondragover = dropZone.ondragenter = function (evt) {
+  evt.preventDefault();
+};
 
-    const animationAction = mixer.clipAction((<any>gltf).animations[0]);
-    animationActions.push(animationAction);
-    animationsFolder.add(animations, 'default');
-    activeAction = animationActions[0];
+dropZone.ondrop = function (evt: DragEvent) {
+  evt.stopPropagation();
+  evt.preventDefault();
 
-    scene.add(gltf.scene);
+  // clear the scene
+  for (let i = scene.children.length - 1; i >= 0; i--) {
+    scene.remove(scene.children[i]);
+  }
 
-    // add animations another file
-    gltfLoader.load(
-      'models/eve-angry.glb',
-      (gltf) => {
-        const animationAction = mixer.clipAction(
-          (<any>gltf).animations[0]
-        );
-        animationActions.push(animationAction);
-        animationsFolder.add(animations, "angry");
+  // clear the checkboxes
+  const myNode = document.getElementById('animationsPanel') as HTMLDivElement;
+  while (myNode.firstChild) {
+    myNode.removeChild(myNode.lastChild as any);
+  }
 
-        gltfLoader.load(
-          'models/eve-clapping.glb',
-          (gltf) => {
-            const animationAction = mixer.clipAction(
-              (<any>gltf).animations[0]
-            );
-            animationActions.push(animationAction);
-            animationsFolder.add(animations, "clapping");
+  const axisHelper = new THREE.AxesHelper(5);
+  scene.add(axisHelper);
 
-            modelReady = true;
-          },
-          (xhr) => {
-            console.log((xhr.loaded / xhr.total) * 100 + '% loaded clapping');
-          },
-          (err) => {
-            console.log(err);
+  const light1 = new THREE.DirectionalLight(new THREE.Color(0xffcccc));
+  light1.position.set(-1, 1, 1);
+  scene.add(light1);
+
+  const light2 = new THREE.DirectionalLight(new THREE.Color(0xccffcc));
+  light2.position.set(1, 1, 1);
+  scene.add(light2);
+
+  const light3 = new THREE.DirectionalLight(new THREE.Color(0xccccff));
+  light3.position.set(0, -1, 0);
+  scene.add(light3);
+
+  const files = (evt.dataTransfer as DataTransfer).files;
+  const reader = new FileReader();
+
+  reader.onload = function() {
+    gltfLoader.parse(
+      reader.result as string,
+      '/',
+      (gltf: GLTF) => {
+        console.log(gltf.scene);
+
+        mixer = new THREE.AnimationMixer(gltf.scene);
+        console.log(gltf.animations);
+
+        if (gltf.animations.length > 0) {
+          const animationsPanel = document.getElementById(
+            'animationsPanel'
+          ) as HTMLDivElement;
+          const ul = document.createElement('ul') as HTMLUListElement;
+          const ulElem = animationsPanel.appendChild(ul);
+
+          gltf.animations.forEach((a: THREE.AnimationClip, i) => {
+            const li = document.createElement('li') as HTMLLIElement;
+            const liElem = ulElem.appendChild(li);
+
+            const checkBox = document.createElement(
+              'input'
+            ) as HTMLInputElement;
+            checkBox.id = 'checkbox_' + i;
+            checkBox.type = 'checkbox';
+            checkBox.addEventListener('change', (e: Event) => {
+              if ((e.target as HTMLInputElement).checked) {
+                mixer.clipAction((gltf as any).animations[i]).play();
+              } else {
+                mixer.clipAction((gltf as any).animations[i]).stop();
+              }
+            });
+
+            liElem.appendChild(checkBox);
+            
+            const label = document.createElement('label') as HTMLLabelElement;
+            label.htmlFor = 'checkbox_' + i;
+            label.innerHTML = a.name;
+            liElem.appendChild(label);
+          });
+
+          if (gltf.animations.length > 1) {
+            const btnPlayAll = document.getElementById('btnPlayAll') as HTMLButtonElement;
+            btnPlayAll.addEventListener('click', (e: Event) => {
+              mixer.stopAllAction();
+              gltf.animations.forEach((a: THREE.AnimationClip) => {
+                mixer.clipAction(a).play();
+              });
+            });
+
+            btnPlayAll.style.display = 'block';
           }
-        );
+        } else {
+          const animationsPanel = document.getElementById('animationsPanel') as HTMLDivElement;
+          animationsPanel.innerHTML = 'No animations found in model';
+        }
+
+        scene.add(gltf.scene);
+
+        const bbox = new THREE.Box3().setFromObject(gltf.scene);
+        controls.target.x = (bbox.min.x + bbox.max.x) / 2;
+        controls.target.y = (bbox.min.y + bbox.max.y) / 2;
+        controls.target.z = (bbox.min.z + bbox.max.z) / 2;
+
+        modelReady = true;
       },
-      (xhr) => {
-        console.log((xhr.loaded / xhr.total) * 100 + '% loaded angry');
-      },
-      (err) => {
-        console.log(err);
+      (error) => {
+        console.log(error);
       }
     )
-  },
-  (xhr) => {
-    console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
-  },
-  (err) => {
-    console.log(err);
-  }
-)
+  };
+
+  reader.readAsArrayBuffer(files[0]);
+};
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
@@ -100,37 +144,6 @@ function onWindowResize() {
 
 const stats = Stats();
 document.body.appendChild(stats.dom);
-
-const animations = {
-  default: function () {
-    setAction(animationActions[0]);
-  },
-  angry: function () {
-    setAction(animationActions[1]);
-  },
-  clapping: function () {
-    setAction(animationActions[2]);
-  }, 
-  dancing: function () {
-    setAction(animationActions[3]);
-  }
-}
-
-function setAction(toAction: THREE.AnimationAction) {
-  if (toAction !== activeAction) {
-    lastAction = activeAction;
-    activeAction = toAction;
-    //lastAction.stop();
-    lastAction.fadeOut(1);
-    activeAction.reset();
-    activeAction.fadeIn(1);
-    activeAction.play();
-  }
-}
-
-const gui = new GUI();
-const animationsFolder = gui.addFolder("Animation");
-animationsFolder.open();
 
 const clock = new THREE.Clock();
 
