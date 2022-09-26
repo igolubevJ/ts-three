@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { DragControls } from 'three/examples/jsm/controls/DragControls';
+import { Reflector } from 'three/examples/jsm/objects/Reflector';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
 const scene = new THREE.Scene();
@@ -39,52 +40,68 @@ plane.rotateX(-Math.PI / 2);
 plane.receiveShadow = true;
 scene.add(plane);
 
-const transformControls = new TransformControls(
-  camera, 
-  renderer.domElement
-);
-scene.add(transformControls);
+const sceneMeshes: THREE.Mesh[] = [];
+let boxHelper: THREE.BoxHelper;
 
-transformControls.addEventListener('mouseDown', function() {
-  controls.enabled = false;
+const dragControls = new DragControls(sceneMeshes, camera, renderer.domElement);
+dragControls.addEventListener('hoveron', function () {
+    boxHelper.visible = true;
+    controls.enabled = false;
 });
 
-transformControls.addEventListener('mouseUp', function() {
-  controls.enabled = true;
+dragControls.addEventListener('hoveroff', function () {
+    boxHelper.visible = false;
+    controls.enabled = true;
 });
 
-window.addEventListener('keydown', function(event: KeyboardEvent) {
-  switch (event.key) {
-    case 'g':
-      transformControls.setMode('translate');
-      break;
-    case 'r':
-      transformControls.setMode('rotate');
-      break;
-    case 's':
-      transformControls.setMode('scale');
-      break;
-  }
+dragControls.addEventListener('drag', function (event) {
+    event.object.position.y = 0;
+});
+
+dragControls.addEventListener('dragstart', function () {
+    boxHelper.visible = true;
+    controls.enabled = false;
+});
+
+dragControls.addEventListener('dragend', function () {
+    boxHelper.visible = false;
+    controls.enabled = true;
 });
 
 let mixer: THREE.AnimationMixer;
 let modelReady = false;
 const gltfLoader = new GLTFLoader();
+let modelGroup: THREE.Group;
+let modelDragBox: THREE.Mesh;
 
 gltfLoader.load('models/eve.@pounchglb.glb', 
   (gltf) => {
     gltf.scene.traverse(function(child) {
+      if (child instanceof THREE.Group) {
+        modelGroup = child;
+      }
+
       if((child as THREE.Mesh).isMesh) {
         child.castShadow = true;
         child.frustumCulled = false;
-        (child as THREE.Mesh).geometry.computeVertexNormals();
+        (child as THREE.Mesh).geometry.computeVertexNormals();  
       }
     });
 
     mixer = new THREE.AnimationMixer(gltf.scene);
     mixer.clipAction((gltf as any).animations[0]).play();
 
-    transformControls.attach(gltf.scene);
+    modelDragBox = new THREE.Mesh(
+      new THREE.BoxGeometry(0.5, 1.3, 0.5),
+      new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 })
+    );
+    modelDragBox.geometry.translate(0, 0.65, 0);
+    scene.add(modelDragBox);
+    sceneMeshes.push(modelDragBox);
+
+    boxHelper = new THREE.BoxHelper(modelDragBox, 0xffff00);
+    boxHelper.visible = false;
+    scene.add(boxHelper);
 
     scene.add(gltf.scene);
     modelReady = true;
@@ -104,6 +121,76 @@ function onWindowResize() {
 const stats = Stats();
 document.body.appendChild(stats.dom);
 
+const mirrorFront1: Reflector = new Reflector(
+  new THREE.PlaneGeometry(1, 2),
+  {
+    color: new THREE.Color(0x7f7f7f),
+    textureWidth: window.innerWidth * window.devicePixelRatio,
+    textureHeight: window.innerHeight * window.devicePixelRatio
+  }
+);
+mirrorFront1.position.y = 1;
+mirrorFront1.position.z = 1;
+mirrorFront1.rotateY(Math.PI);
+scene.add(mirrorFront1);
+
+/*
+const mirrorBack1: Reflector = new Reflector(
+    new THREE.PlaneBufferGeometry(2, 2),
+    {
+        color: new THREE.Color(0x7f7f7f),
+        textureWidth: window.innerWidth * window.devicePixelRatio,
+        textureHeight: window.innerHeight * window.devicePixelRatio
+    }
+)
+
+mirrorBack1.position.y = 1
+mirrorBack1.position.z = -1
+scene.add(mirrorBack1)
+
+const mirrorBack2: Reflector = new Reflector(
+    new THREE.PlaneBufferGeometry(2, 2),
+    {
+        color: new THREE.Color(0x7f7f7f),
+        textureWidth: window.innerWidth * window.devicePixelRatio,
+        textureHeight: window.innerHeight * window.devicePixelRatio
+    }
+)
+
+mirrorBack2.position.y = 1
+mirrorBack2.position.z = -2
+scene.add(mirrorBack2)
+
+const mirrorFront1: Reflector = new Reflector(
+    new THREE.PlaneBufferGeometry(2, 2),
+    {
+        color: new THREE.Color(0x7f7f7f),
+        //clipBias: 0.003,
+        textureWidth: window.innerWidth * window.devicePixelRatio,
+        textureHeight: window.innerHeight * window.devicePixelRatio
+    }
+)
+mirrorFront1.position.y = 1
+mirrorFront1.position.z = 1
+mirrorFront1.rotateY(Math.PI)
+scene.add(mirrorFront1)
+
+const mirrorFront2: Reflector = new Reflector(
+    new THREE.PlaneBufferGeometry(2, 2),
+    {
+        color: new THREE.Color(0x7f7f7f),
+        //clipBias: 0.003,
+        textureWidth: window.innerWidth * window.devicePixelRatio,
+        textureHeight: window.innerHeight * window.devicePixelRatio
+    }
+)
+mirrorFront2.position.y = 1
+mirrorFront2.position.z = 2
+mirrorFront2.rotateY(Math.PI)
+scene.add(mirrorFront2)
+
+*/
+
 const clock = new THREE.Clock();
 
 function animate() {
@@ -113,6 +200,8 @@ function animate() {
 
   if (modelReady) {
     mixer.update(clock.getDelta());
+    modelGroup.position.copy(modelDragBox.position);
+    boxHelper.update();
   }
 
   render();
