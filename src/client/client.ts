@@ -1,138 +1,114 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { DragControls } from 'three/examples/jsm/controls/DragControls';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
 const scene = new THREE.Scene();
+scene.add(new THREE.AxesHelper(5));
+
+const light1 = new THREE.PointLight();
+light1.position.set(2.5, 2.5, 2.5);
+light1.castShadow = true;
+scene.add(light1);
+
+const light2 = new THREE.PointLight();
+light2.position.set(-2.5, 2.5, 2.5);
+light2.castShadow = true;
+scene.add(light2);
 
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.set(4.0, 4.0, 4.0);
+camera.position.set(0.8, 1.4, 1.0);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
+controls.target.set(0, 1, 0);
+
+const sceneMeshes: THREE.Mesh[] = [];
+let boxHelper: THREE.BoxHelper;
+
+const dragControls = new DragControls(sceneMeshes, camera, renderer.domElement);
+dragControls.addEventListener('hoveron', function() {
+  boxHelper.visible = true;
+  controls.enabled = false;
+});
+
+dragControls.addEventListener('hoveroff', function() {
+  boxHelper.visible = false;
+  controls.enabled = true;
+});
+
+dragControls.addEventListener('drag', function(event) {
+  event.object.position.y = 0;
+});
+
+dragControls.addEventListener('dragstart', function() {
+  boxHelper.visible = true;
+  controls.enabled = false;
+});
+
+dragControls.addEventListener('dragend', function() {
+  boxHelper.visible = false;
+  controls.enabled = true;
+});
+
+const planeGeometry = new THREE.PlaneGeometry(25, 25);
+const texture = new THREE.TextureLoader().load('img/grid.png');
+const plane: THREE.Mesh = new THREE.Mesh(
+  planeGeometry,
+  new THREE.MeshPhongMaterial({ map: texture })
+);
+plane.rotateX(-Math.PI / 2);
+plane.receiveShadow = true;
+scene.add(plane);
 
 let mixer: THREE.AnimationMixer;
 let modelReady = false;
-
 const gltfLoader = new GLTFLoader();
-const dropZone = document.getElementById('dropzone') as HTMLDivElement;
+let modelGroup: THREE.Group;
+let modelDragBox: THREE.Mesh;
 
-dropZone.ondragover = dropZone.ondragenter = function (evt) {
-  evt.preventDefault();
-};
-
-dropZone.ondrop = function (evt: DragEvent) {
-  evt.stopPropagation();
-  evt.preventDefault();
-
-  // clear the scene
-  for (let i = scene.children.length - 1; i >= 0; i--) {
-    scene.remove(scene.children[i]);
-  }
-
-  // clear the checkboxes
-  const myNode = document.getElementById('animationsPanel') as HTMLDivElement;
-  while (myNode.firstChild) {
-    myNode.removeChild(myNode.lastChild as any);
-  }
-
-  const axisHelper = new THREE.AxesHelper(5);
-  scene.add(axisHelper);
-
-  const light1 = new THREE.DirectionalLight(new THREE.Color(0xffcccc));
-  light1.position.set(-1, 1, 1);
-  scene.add(light1);
-
-  const light2 = new THREE.DirectionalLight(new THREE.Color(0xccffcc));
-  light2.position.set(1, 1, 1);
-  scene.add(light2);
-
-  const light3 = new THREE.DirectionalLight(new THREE.Color(0xccccff));
-  light3.position.set(0, -1, 0);
-  scene.add(light3);
-
-  const files = (evt.dataTransfer as DataTransfer).files;
-  const reader = new FileReader();
-
-  reader.onload = function() {
-    gltfLoader.parse(
-      reader.result as string,
-      '/',
-      (gltf: GLTF) => {
-        console.log(gltf.scene);
-
-        mixer = new THREE.AnimationMixer(gltf.scene);
-        console.log(gltf.animations);
-
-        if (gltf.animations.length > 0) {
-          const animationsPanel = document.getElementById(
-            'animationsPanel'
-          ) as HTMLDivElement;
-          const ul = document.createElement('ul') as HTMLUListElement;
-          const ulElem = animationsPanel.appendChild(ul);
-
-          gltf.animations.forEach((a: THREE.AnimationClip, i) => {
-            const li = document.createElement('li') as HTMLLIElement;
-            const liElem = ulElem.appendChild(li);
-
-            const checkBox = document.createElement(
-              'input'
-            ) as HTMLInputElement;
-            checkBox.id = 'checkbox_' + i;
-            checkBox.type = 'checkbox';
-            checkBox.addEventListener('change', (e: Event) => {
-              if ((e.target as HTMLInputElement).checked) {
-                mixer.clipAction((gltf as any).animations[i]).play();
-              } else {
-                mixer.clipAction((gltf as any).animations[i]).stop();
-              }
-            });
-
-            liElem.appendChild(checkBox);
-            
-            const label = document.createElement('label') as HTMLLabelElement;
-            label.htmlFor = 'checkbox_' + i;
-            label.innerHTML = a.name;
-            liElem.appendChild(label);
-          });
-
-          if (gltf.animations.length > 1) {
-            const btnPlayAll = document.getElementById('btnPlayAll') as HTMLButtonElement;
-            btnPlayAll.addEventListener('click', (e: Event) => {
-              mixer.stopAllAction();
-              gltf.animations.forEach((a: THREE.AnimationClip) => {
-                mixer.clipAction(a).play();
-              });
-            });
-
-            btnPlayAll.style.display = 'block';
-          }
-        } else {
-          const animationsPanel = document.getElementById('animationsPanel') as HTMLDivElement;
-          animationsPanel.innerHTML = 'No animations found in model';
-        }
-
-        scene.add(gltf.scene);
-
-        const bbox = new THREE.Box3().setFromObject(gltf.scene);
-        controls.target.x = (bbox.min.x + bbox.max.x) / 2;
-        controls.target.y = (bbox.min.y + bbox.max.y) / 2;
-        controls.target.z = (bbox.min.z + bbox.max.z) / 2;
-
-        modelReady = true;
-      },
-      (error) => {
-        console.log(error);
+gltfLoader.load('models/eve.@pounchglb.glb', 
+  (gltf) => {
+    gltf.scene.traverse(function(child) {
+      if (child instanceof THREE.Group) {
+        modelGroup = child;
       }
-    )
-  };
 
-  reader.readAsArrayBuffer(files[0]);
-};
+      if ((child as THREE.Mesh).isMesh) {
+        child.castShadow = true;
+        child.frustumCulled = false;
+        (child as THREE.Mesh).geometry.computeVertexNormals();
+      }
+    });
+
+    mixer = new THREE.AnimationMixer(gltf.scene);
+    mixer.clipAction((gltf as any).animations[0]).play();
+
+    modelDragBox = new THREE.Mesh(
+      new THREE.BoxGeometry(0.5, 1.3, 0.5),
+      new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 })
+    );
+
+    modelDragBox.geometry.translate(0, 0.65, 0);
+    scene.add(modelDragBox);
+    sceneMeshes.push(modelDragBox);
+
+    boxHelper = new THREE.BoxHelper(modelDragBox, 0xffff00);
+    boxHelper.visible = false;
+    scene.add(boxHelper);
+
+    scene.add(gltf.scene);
+    modelReady = true;
+  },
+  (xhr) => console.log(((xhr.loaded / xhr.total) * 100) + '% loaded'), 
+  (error) => console.log(error)
+);
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
@@ -152,7 +128,11 @@ function animate() {
 
   controls.update();
 
-  if (modelReady) mixer.update(clock.getDelta());
+  if (modelReady) {
+    mixer.update(clock.getDelta());
+    modelGroup.position.copy(modelDragBox.position);
+    boxHelper.update();
+  }
 
   render();
 
