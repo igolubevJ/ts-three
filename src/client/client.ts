@@ -16,13 +16,13 @@ renderer.shadowMap.enabled = true;
 renderer.outputEncoding = THREE.sRGBEncoding;
 document.body.appendChild(renderer.domElement);
 
-const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-const points = new Array();
-points.push(new THREE.Vector3(0, 0, 0));
-points.push(new THREE.Vector3(0, 0, 0.25));
-const geometry = new THREE.BufferGeometry().setFromPoints(points);
-const line = new THREE.Line(geometry, material);
-scene.add(line);
+let arrowHelper = new THREE.ArrowHelper(
+  new THREE.Vector3(),
+  new THREE.Vector3(),
+  0.25,
+  0xffff00
+);
+scene.add(arrowHelper);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
@@ -74,21 +74,18 @@ function onMouseMove(event: MouseEvent) {
   mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
   mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
 
-  // console.log(mouse);
-
   raycaster.setFromCamera(mouse, camera);
 
   const intersects = raycaster.intersectObjects(sceneMeshes, false);
 
   if (intersects.length > 0) {
-    // console.log(`${sceneMeshes.length} ${intersects.length}`);
-    // console.log(intersects[0]);
-    // console.log(intersects[0].object.userData.name + " " + intersects[0].distance + " ");
-    // console.log((intersects[0].face as THREE.Face).normal);
+    // console.log(intersects[0].point);
+    const n = new THREE.Vector3();
+    n.copy((intersects[0].face as THREE.Face).normal);
+    // n.transformDirection(intersects[0].object.matrixWorld);
 
-    line.position.set(0, 0, 0);
-    line.lookAt((intersects[0].face as THREE.Face).normal);
-    line.position.copy(intersects[0].point);
+    arrowHelper.setDirection(n);
+    arrowHelper.position.copy(intersects[0].point);
   }
 }
 
