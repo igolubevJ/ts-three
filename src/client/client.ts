@@ -19,6 +19,8 @@ document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
+const raycaster = new THREE.Raycaster();
+
 const gltfLoader = new GLTFLoader();
 
 gltfLoader.load('models/monkey_textured.glb', 
@@ -61,7 +63,7 @@ function onMouseMove(event: MouseEvent) {
     y: (event.clientY / renderer.domElement.clientHeight) * 2 + 1
   };
 
-  console.log(mouse);
+  // console.log(mouse);
 }
 
 const stats = Stats();
