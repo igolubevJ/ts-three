@@ -92,7 +92,13 @@ gltfLoader.load('models/eve.@pounchglb.glb',
       new THREE.MeshBasicMaterial({ transparent: true, opacity: 1 })
     );
 
+    modelDragBox.geometry.translate(0, 0.65, 0);
     scene.add(modelDragBox);
+    sceneMeshes.push(modelDragBox);
+
+    boxHelper = new THREE.BoxHelper(modelDragBox, 0xffff00);
+    boxHelper.visible = true;
+    scene.add(boxHelper);
 
     scene.add(gltf.scene);
     modelReady = true;
