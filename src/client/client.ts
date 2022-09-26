@@ -75,7 +75,8 @@ function onMouseMove(event: MouseEvent) {
   if (intersects.length > 0) {
     // console.log(`${sceneMeshes.length} ${intersects.length}`);
     // console.log(intersects[0]);
-    console.log(intersects[0].object.userData.name + " " + intersects[0].distance + " ");
+    // console.log(intersects[0].object.userData.name + " " + intersects[0].distance + " ");
+    console.log((intersects[0].face as THREE.Face).normal);
   }
 }
 
