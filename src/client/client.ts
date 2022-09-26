@@ -87,6 +87,13 @@ gltfLoader.load('models/eve.@pounchglb.glb',
       }
     });
 
+    modelDragBox = new THREE.Mesh(
+      new THREE.BoxGeometry(0.5, 1.3, 0.5),
+      new THREE.MeshBasicMaterial({ transparent: true, opacity: 1 })
+    );
+
+    scene.add(modelDragBox);
+
     scene.add(gltf.scene);
     modelReady = true;
   },
