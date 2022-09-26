@@ -53,6 +53,17 @@ function onWindowResize() {
   render();
 }
 
+renderer.domElement.addEventListener('mousemove', onMouseMove, false);
+
+function onMouseMove(event: MouseEvent) {
+  const mouse = {
+    x: (event.clientX / renderer.domElement.clientWidth) * 2 - 1,
+    y: (event.clientY / renderer.domElement.clientHeight) * 2 + 1
+  };
+
+  console.log(mouse);
+}
+
 const stats = Stats();
 document.body.appendChild(stats.dom);
 
