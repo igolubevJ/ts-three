@@ -67,6 +67,21 @@ plane.rotateX(-Math.PI / 2);
 plane.receiveShadow = true;
 scene.add(plane);
 
+let mixer: THREE.AnimationMixer;
+let modelReady = false;
+const gltfLoader = new GLTFLoader();
+let modelGroup: THREE.Group;
+let modelDragBox: THREE.Mesh;
+
+gltfLoader.load('models/eve.@pounchglb.glb', 
+  (gltf) => {
+    scene.add(gltf.scene);
+    modelReady = true;
+  },
+  (xhr) => console.log(((xhr.loaded / xhr.total) * 100) + '% loaded'), 
+  (error) => console.log(error)
+);
+
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
