@@ -41,6 +41,13 @@ wall1.position.x = 4;
 wall1.rotateY(-Math.PI / 2);
 scene.add(wall1);
 
+const wall2 = new THREE.Mesh(
+  new THREE.PlaneGeometry(2, 2),
+  new THREE.MeshNormalMaterial({ side: THREE.DoubleSide })
+);
+wall2.position.z = -3;
+scene.add(wall2);
+
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
