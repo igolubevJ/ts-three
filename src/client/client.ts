@@ -89,7 +89,23 @@ function onDoubleClick(event: MouseEvent) {
         // x: p.x,
         y: p.y + 3,
         // z: p.z
-      }, 250).start();
+      }, 250)
+      .delay(1000)
+      .easing(TWEEN.Easing.Cubic.Out)
+      // .onUpdate(() => render())
+      .start()
+      .onComplete(() => {
+        new TWEEN.Tween(sceneMeshes[1].position)
+          .to(
+            {
+              // x: p.x,
+              y: p.y + 1,
+              // z: p.z
+            },
+            250
+          ).easing(TWEEN.Easing.Bounce.Out)
+          .start();
+      });
   }
 }
 
