@@ -48,6 +48,13 @@ const wall2 = new THREE.Mesh(
 wall2.position.z = -3;
 scene.add(wall2);
 
+const cube = new THREE.Mesh(
+  new THREE.BoxGeometry(),
+  new THREE.MeshNormalMaterial()
+);
+cube.position.set(-3, 0, 0);
+scene.add(cube);
+
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
