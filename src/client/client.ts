@@ -1,107 +1,61 @@
 import * as THREE from 'three';
+import { AxesHelper } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
 const scene = new THREE.Scene();
+scene.add(new AxesHelper(5));
+
+const light = new THREE.SpotLight();
+light.position.set(12.5, 12.5, 12.5);
+light.castShadow = true;
+light.shadow.mapSize.width = 1024;
+light.shadow.mapSize.height = 1024;
+scene.add(light);
 
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.z = 2;
+camera.position.set(15, 15, 15);
 
 const renderer = new THREE.WebGLRenderer();
+renderer.shadowMap.enabled = true;
+renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-
-const raycaster = new THREE.Raycaster();
-const sceneMeshes: THREE.Mesh[] = [];
-const dir = new THREE.Vector3();
-let intersects: THREE.Intersection[] = [];
-
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.addEventListener('change', function() {
-  xLine.position.copy(controls.target);
-  yLine.position.copy(controls.target);
-  zLine.position.copy(controls.target);
 
-  raycaster.set(
-    controls.target,
-    dir.subVectors(camera.position, controls.target).normalize()
-  );
+const pickableObjects: THREE.Mesh[] = [];
+let intersectedObject: THREE.Object3D | null;
+const originalMaterials: { [id: string]: THREE.Material | THREE.Material[] } = {};
+const hightlightedMaterial = new THREE.MeshBasicMaterial({
+  wireframe: true,
+  color: 0x00ff00
+});
 
-  intersects = raycaster.intersectObjects(sceneMeshes, false);
-  if (intersects.length > 0) {
-    if (intersects[0].distance < controls.target.distanceTo(camera.position)) {
-      camera.position.copy(intersects[0].point);
+const loader = new GLTFLoader();
+
+loader.load('models/simplescene.glb', (gltf) => {
+  gltf.scene.traverse((child) => {
+    if ((<THREE.Mesh>child).isMesh) {
+      const m = <THREE.Mesh>child;
+      switch(m.name) {
+        case 'Plane':
+          m.receiveShadow = true;
+          break;
+        case 'Sphere':
+          m.castShadow = true;
+          break;
+        default:
+          m.castShadow = true;
+          pickableObjects.push(m);
+          originalMaterials[m.name] = (<THREE.Mesh>m).material;
+      }
     }
-  }
+  });
+  scene.add(gltf.scene);
 });
-
-const floor = new THREE.Mesh(
-  new THREE.PlaneGeometry(10, 10),
-  new THREE.MeshNormalMaterial({ side: THREE.DoubleSide })
-);
-floor.rotateX(Math.PI / 2);
-floor.position.y = -1;
-scene.add(floor);
-sceneMeshes.push(floor);
-
-const ceiling = new THREE.Mesh(
-  new THREE.PlaneGeometry(10, 10),
-  new THREE.MeshNormalMaterial({ side: THREE.DoubleSide })
-);
-ceiling.rotateX(Math.PI / 2);
-ceiling.position.y = 3;
-scene.add(ceiling);
-sceneMeshes.push(ceiling);
-
-const wall1 = new THREE.Mesh(
-  new THREE.PlaneGeometry(2, 2),
-  new THREE.MeshNormalMaterial({ side: THREE.DoubleSide })
-);
-wall1.position.x = 4;
-wall1.rotateY(-Math.PI / 2);
-scene.add(wall1);
-sceneMeshes.push(wall1);
-
-const wall2 = new THREE.Mesh(
-  new THREE.PlaneGeometry(2, 2),
-  new THREE.MeshNormalMaterial({ side: THREE.DoubleSide })
-);
-wall2.position.z = -3;
-scene.add(wall2);
-sceneMeshes.push(wall2);
-
-const cube = new THREE.Mesh(
-  new THREE.BoxGeometry(),
-  new THREE.MeshNormalMaterial()
-);
-cube.position.set(-3, 0, 0);
-scene.add(cube);
-sceneMeshes.push(cube);
-
-// crosshair
-const lineMaterial = new THREE.LineBasicMaterial({
-  color: 0x0000ff
-});
-const points: THREE.Vector3[] = [];
-points[0] = new THREE.Vector3(-0.1, 0, 0);
-points[1] = new THREE.Vector3(0.1, 0, 0);
-let lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-const xLine = new THREE.Line(lineGeometry, lineMaterial);
-scene.add(xLine);
-
-points[0] = new THREE.Vector3(0, -0.1, 0);
-points[1] = new THREE.Vector3(0, 0.1, 0);
-lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-const yLine = new THREE.Line(lineGeometry, lineMaterial);
-scene.add(yLine);
-
-points[0] = new THREE.Vector3(0, 0, -0.1);
-points[1] = new THREE.Vector3(0, 0, 0.1);
-lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-const zLine = new THREE.Line(lineGeometry, lineMaterial);
-scene.add(zLine);
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
@@ -109,6 +63,32 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
   render();
+}
+
+const raycaster = new THREE.Raycaster();
+let intersects: THREE.Intersection[];
+
+document.addEventListener('mousemove', onDocumentMouseMove, false);
+function onDocumentMouseMove(event: MouseEvent) {
+  const pointer = new THREE.Vector2();
+  pointer.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+  pointer.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  intersects = raycaster.intersectObjects(pickableObjects, false);
+
+  if (intersects.length > 0) {
+    intersectedObject = intersects[0].object;
+  } else {
+    intersectedObject = null;
+  }
+
+  pickableObjects.forEach((o: THREE.Mesh, i) => {
+    if (intersectedObject && intersectedObject.name === o.name) {
+      pickableObjects[i].material = hightlightedMaterial;
+    } else {
+      pickableObjects[i].material = originalMaterials[o.name];
+    }
+  });
 }
 
 const stats = Stats();
