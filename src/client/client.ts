@@ -66,6 +66,33 @@ function onWindowResize() {
   render();
 }
 
+let ctrlDown = false;
+let lineId = 0;
+let line: THREE.Line;
+let drawingLine = false;
+const measurementLabels: { [key: number]: CSS2DObject } = {};
+
+window.addEventListener('keydown', function (event) {
+  if (event.key === 'Control') {
+    ctrlDown = true;
+    controls.enabled = false;
+    renderer.domElement.style.cursor = 'crosshair';
+  }
+});
+
+window.addEventListener('keyup', function (event) {
+  if (event.key === 'Control') {
+    ctrlDown = false;
+    controls.enabled = true;
+    renderer.domElement.style.cursor = 'pointer';
+    if (drawingLine) {
+      scene.remove(line);
+      scene.remove(measurementLabels[lineId]);
+      drawingLine = false;
+    }
+  }
+});
+
 const stats = Stats();
 document.body.appendChild(stats.dom);
 
