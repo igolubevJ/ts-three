@@ -45,7 +45,9 @@ gltfLoader.load('models/monkey_textured.glb',
         m.receiveShadow = true;
         m.castShadow = true;
         // (m.material as THREE.MeshStandardMaterial).flatShading = true;
-        sceneMeshes.push(m);
+        if (m.userData.name !== 'Plane') {
+          sceneMeshes.push(m);
+        }
       }
 
       if ((child as THREE.Light).isLight) {
@@ -108,7 +110,6 @@ function onDoubleClick(event: MouseEvent) {
     n.copy((intersects[0].face as THREE.Face).normal);
     n.transformDirection(intersects[0].object.matrixWorld);
 
-    // const cube = new THREE.Mesh(boxGeometry, material);
     const cube = new THREE.Mesh(coneGeometry, material);
 
     cube.lookAt(n);
