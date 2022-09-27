@@ -55,6 +55,19 @@ function onWindowResize() {
     render();
 }
 
+const raycaster = new THREE.Raycaster();
+
+renderer.domElement.addEventListener('dblclick', onDoubleClick, false);
+function onDoubleClick(event: MouseEvent) {
+  const mouse = new THREE.Vector2();
+  mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+  mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+
+  const intersects = raycaster.intersectObjects(sceneMeshes, false);
+  if (intersects.length > 0) {}
+}
+
 const stats = Stats();
 document.body.appendChild(stats.dom);
 
