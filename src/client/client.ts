@@ -26,7 +26,8 @@ scene.add(arrowHelper);
 
 const material = new THREE.MeshNormalMaterial();
 
-const boxGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+// const boxGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+const coneGeometry = new THREE.ConeGeometry(0.05, 0.2, 8);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
@@ -107,9 +108,11 @@ function onDoubleClick(event: MouseEvent) {
     n.copy((intersects[0].face as THREE.Face).normal);
     n.transformDirection(intersects[0].object.matrixWorld);
 
-    const cube = new THREE.Mesh(boxGeometry, material);
+    // const cube = new THREE.Mesh(boxGeometry, material);
+    const cube = new THREE.Mesh(coneGeometry, material);
 
     cube.lookAt(n);
+    cube.rotateX(Math.PI / 2);
     cube.position.copy(intersects[0].point);
     cube.position.addScaledVector(n, 0.1);
 
