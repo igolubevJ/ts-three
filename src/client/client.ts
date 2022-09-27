@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { AxesHelper } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
 const scene = new THREE.Scene();
@@ -22,10 +23,22 @@ renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const raycaster = new THREE.Raycaster();
-
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
+
+const pickableObjects: THREE.Mesh[] = [];
+let intersectedObject: THREE.Object3D | null;
+const originalMaterials: { [id: string]: THREE.Material | THREE.Material[] } = {};
+const hightlightedMaterial = new THREE.MeshBasicMaterial({
+  wireframe: true,
+  color: 0x00ff00
+});
+
+const loader = new GLTFLoader();
+
+loader.load('models/simplescene.glb', (gltf) => {
+  scene.add(gltf.scene);
+})
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
