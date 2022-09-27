@@ -68,13 +68,21 @@ function onDoubleClick(event: MouseEvent) {
   const intersects = raycaster.intersectObjects(sceneMeshes, false);
   if (intersects.length > 0) {
     const p = intersects[0].point;
-    console.log(p);
-    controls.target.set(p.x, p.y, p.z);
-    new TWEEN.Tween(controls.target)
-      .to({ x: p.x, y: p.y, z: p.z }, 500)
-      // .delay(1000)
-      .easing(TWEEN.Easing.Cubic.Out)
-      .start();
+    // controls.target.set(p.x, p.y, p.z);
+    // new TWEEN.Tween(controls.target)
+    //   .to({ x: p.x, y: p.y, z: p.z }, 500)
+    //   // .delay(1000)
+    //   .easing(TWEEN.Easing.Cubic.Out)
+    //   .start();
+
+    new TWEEN.Tween(sceneMeshes[1].position)
+      .to({
+        x: p.x,
+        // y: p.y + 1,
+        z: p.z
+      },
+      500
+    ).start();
   }
 }
 
