@@ -26,14 +26,6 @@ document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
-const pickableObjects: THREE.Mesh[] = [];
-let intersectedObject: THREE.Object3D | null;
-const originalMaterials: { [id: string]: THREE.Material | THREE.Material[] } = {};
-const hightlightedMaterial = new THREE.MeshBasicMaterial({
-  wireframe: true,
-  color: 0x00ff00
-});
-
 const loader = new GLTFLoader();
 
 loader.load('models/simplescene.glb', (gltf) => {
@@ -49,8 +41,6 @@ loader.load('models/simplescene.glb', (gltf) => {
           break;
         default:
           m.castShadow = true;
-          pickableObjects.push(m);
-          originalMaterials[m.name] = (<THREE.Mesh>m).material;
       }
     }
   });
@@ -63,32 +53,6 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
   render();
-}
-
-const raycaster = new THREE.Raycaster();
-let intersects: THREE.Intersection[];
-
-document.addEventListener('mousemove', onDocumentMouseMove, false);
-function onDocumentMouseMove(event: MouseEvent) {
-  const pointer = new THREE.Vector2();
-  pointer.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
-  pointer.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
-  raycaster.setFromCamera(pointer, camera);
-  intersects = raycaster.intersectObjects(pickableObjects, false);
-
-  if (intersects.length > 0) {
-    intersectedObject = intersects[0].object;
-  } else {
-    intersectedObject = null;
-  }
-
-  pickableObjects.forEach((o: THREE.Mesh, i) => {
-    if (intersectedObject && intersectedObject.name === o.name) {
-      pickableObjects[i].material = hightlightedMaterial;
-    } else {
-      pickableObjects[i].material = originalMaterials[o.name];
-    }
-  });
 }
 
 const stats = Stats();
