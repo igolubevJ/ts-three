@@ -83,6 +83,13 @@ function onDoubleClick(event: MouseEvent) {
       },
       500
     ).start();
+
+    new TWEEN.Tween(sceneMeshes[1].position)
+      .to({
+        // x: p.x,
+        y: p.y + 3,
+        // z: p.z
+      }, 250).start();
   }
 }
 
