@@ -11,97 +11,10 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-
 const raycaster = new THREE.Raycaster();
-const sceneMeshes: THREE.Mesh[] = [];
-const dir = new THREE.Vector3();
-let intersects: THREE.Intersection[] = [];
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.addEventListener('change', function() {
-  xLine.position.copy(controls.target);
-  yLine.position.copy(controls.target);
-  zLine.position.copy(controls.target);
-
-  raycaster.set(
-    controls.target,
-    dir.subVectors(camera.position, controls.target).normalize()
-  );
-
-  intersects = raycaster.intersectObjects(sceneMeshes, false);
-  if (intersects.length > 0) {
-    if (intersects[0].distance < controls.target.distanceTo(camera.position)) {
-      camera.position.copy(intersects[0].point);
-    }
-  }
-});
-
-const floor = new THREE.Mesh(
-  new THREE.PlaneGeometry(10, 10),
-  new THREE.MeshNormalMaterial({ side: THREE.DoubleSide })
-);
-floor.rotateX(Math.PI / 2);
-floor.position.y = -1;
-scene.add(floor);
-sceneMeshes.push(floor);
-
-const ceiling = new THREE.Mesh(
-  new THREE.PlaneGeometry(10, 10),
-  new THREE.MeshNormalMaterial({ side: THREE.DoubleSide })
-);
-ceiling.rotateX(Math.PI / 2);
-ceiling.position.y = 3;
-scene.add(ceiling);
-sceneMeshes.push(ceiling);
-
-const wall1 = new THREE.Mesh(
-  new THREE.PlaneGeometry(2, 2),
-  new THREE.MeshNormalMaterial({ side: THREE.DoubleSide })
-);
-wall1.position.x = 4;
-wall1.rotateY(-Math.PI / 2);
-scene.add(wall1);
-sceneMeshes.push(wall1);
-
-const wall2 = new THREE.Mesh(
-  new THREE.PlaneGeometry(2, 2),
-  new THREE.MeshNormalMaterial({ side: THREE.DoubleSide })
-);
-wall2.position.z = -3;
-scene.add(wall2);
-sceneMeshes.push(wall2);
-
-const cube = new THREE.Mesh(
-  new THREE.BoxGeometry(),
-  new THREE.MeshNormalMaterial()
-);
-cube.position.set(-3, 0, 0);
-scene.add(cube);
-sceneMeshes.push(cube);
-
-// crosshair
-const lineMaterial = new THREE.LineBasicMaterial({
-  color: 0x0000ff
-});
-const points: THREE.Vector3[] = [];
-points[0] = new THREE.Vector3(-0.1, 0, 0);
-points[1] = new THREE.Vector3(0.1, 0, 0);
-let lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-const xLine = new THREE.Line(lineGeometry, lineMaterial);
-scene.add(xLine);
-
-points[0] = new THREE.Vector3(0, -0.1, 0);
-points[1] = new THREE.Vector3(0, 0.1, 0);
-lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-const yLine = new THREE.Line(lineGeometry, lineMaterial);
-scene.add(yLine);
-
-points[0] = new THREE.Vector3(0, 0, -0.1);
-points[1] = new THREE.Vector3(0, 0, 0.1);
-lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-const zLine = new THREE.Line(lineGeometry, lineMaterial);
-scene.add(zLine);
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
