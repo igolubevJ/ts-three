@@ -11,10 +11,31 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
 
 const raycaster = new THREE.Raycaster();
+const sceneMeshes: THREE.Mesh[] = [];
+const dir = new THREE.Vector3();
+let intersects: THREE.Intersection[] = [];
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.addEventListener('change', function() {
+  xLine.position.copy(controls.target);
+  yLine.position.copy(controls.target);
+  zLine.position.copy(controls.target);
+
+  raycaster.set(
+    controls.target,
+    dir.subVectors(camera.position, controls.target).normalize()
+  );
+
+  intersects = raycaster.intersectObjects(sceneMeshes, false);
+  if (intersects.length > 0) {
+    if (intersects[0].distance < controls.target.distanceTo(camera.position)) {
+      camera.position.copy(intersects[0].point);
+    }
+  }
+});
 
 const floor = new THREE.Mesh(
   new THREE.PlaneGeometry(10, 10),
@@ -23,6 +44,7 @@ const floor = new THREE.Mesh(
 floor.rotateX(Math.PI / 2);
 floor.position.y = -1;
 scene.add(floor);
+sceneMeshes.push(floor);
 
 const ceiling = new THREE.Mesh(
   new THREE.PlaneGeometry(10, 10),
@@ -31,6 +53,7 @@ const ceiling = new THREE.Mesh(
 ceiling.rotateX(Math.PI / 2);
 ceiling.position.y = 3;
 scene.add(ceiling);
+sceneMeshes.push(ceiling);
 
 const wall1 = new THREE.Mesh(
   new THREE.PlaneGeometry(2, 2),
@@ -39,6 +62,7 @@ const wall1 = new THREE.Mesh(
 wall1.position.x = 4;
 wall1.rotateY(-Math.PI / 2);
 scene.add(wall1);
+sceneMeshes.push(wall1);
 
 const wall2 = new THREE.Mesh(
   new THREE.PlaneGeometry(2, 2),
@@ -46,6 +70,7 @@ const wall2 = new THREE.Mesh(
 );
 wall2.position.z = -3;
 scene.add(wall2);
+sceneMeshes.push(wall2);
 
 const cube = new THREE.Mesh(
   new THREE.BoxGeometry(),
@@ -53,6 +78,7 @@ const cube = new THREE.Mesh(
 );
 cube.position.set(-3, 0, 0);
 scene.add(cube);
+sceneMeshes.push(cube);
 
 // crosshair
 const lineMaterial = new THREE.LineBasicMaterial({
