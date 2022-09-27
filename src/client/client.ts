@@ -33,7 +33,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
 const raycaster = new THREE.Raycaster();
-const sceneMeshes: THREE.Mesh[] = [];
+const sceneMeshes: THREE.Object3D[] = [];
 
 const gltfLoader = new GLTFLoader();
 
@@ -44,10 +44,10 @@ gltfLoader.load('models/monkey_textured.glb',
         let m = child as THREE.Mesh;
         m.receiveShadow = true;
         m.castShadow = true;
-        // (m.material as THREE.MeshStandardMaterial).flatShading = true;
-        if (m.userData.name !== 'Plane') {
-          sceneMeshes.push(m);
-        }
+        (m.material as THREE.MeshStandardMaterial).flatShading = true;
+        // if (m.userData.name !== 'Plane') {
+        //   sceneMeshes.push(m);
+        // }
       }
 
       if ((child as THREE.Light).isLight) {
@@ -60,7 +60,7 @@ gltfLoader.load('models/monkey_textured.glb',
     });
 
     scene.add(gltf.scene);
-    // sceneMeshes.push(gltf.scene);
+    sceneMeshes.push(gltf.scene);
   },
   (xhr) => console.log(((xhr.loaded / xhr.total) * 100) + '% loaded'), 
   (error) => console.log(error)
@@ -84,7 +84,7 @@ function onMouseMove(event: MouseEvent) {
 
   raycaster.setFromCamera(mouse, camera);
 
-  const intersects = raycaster.intersectObjects(sceneMeshes, false);
+  const intersects = raycaster.intersectObjects(sceneMeshes, true);
 
   if (intersects.length > 0) {
     const n = new THREE.Vector3();
@@ -103,7 +103,7 @@ function onDoubleClick(event: MouseEvent) {
 
   raycaster.setFromCamera(mouse, camera);
 
-  const intersects = raycaster.intersectObjects(sceneMeshes, false);
+  const intersects = raycaster.intersectObjects(sceneMeshes, true);
 
   if (intersects.length > 0) {
     const n = new THREE.Vector3();
