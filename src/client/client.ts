@@ -111,6 +111,7 @@ function onDoubleClick(event: MouseEvent) {
 
     cube.lookAt(n);
     cube.position.copy(intersects[0].point);
+    cube.position.addScaledVector(n, 0.1);
 
     scene.add(cube);
   }
