@@ -114,6 +114,7 @@ function onDoubleClick(event: MouseEvent) {
     cube.position.addScaledVector(n, 0.1);
 
     scene.add(cube);
+    sceneMeshes.push(cube);
   }
 }
 
