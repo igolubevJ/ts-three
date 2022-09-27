@@ -93,6 +93,54 @@ window.addEventListener('keyup', function (event) {
   }
 });
 
+const raycaster = new THREE.Raycaster();
+let intersects: THREE.Intersection[];
+const mouse = new THREE.Vector2();
+
+renderer.domElement.addEventListener('pointerdown', onClick, false);
+function onClick() {
+  if (ctrlDown) {
+    raycaster.setFromCamera(mouse, camera);
+    intersects = raycaster.intersectObjects(pickableObjects, false);
+    if (intersects.length > 0) {
+      if (!drawingLine) {
+        const points = [];
+        points.push(intersects[0].point);
+        points.push(intersects[0].point.clone());
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+        line = new THREE.LineSegments(
+          geometry,
+          new THREE.LineBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.75,
+          }),
+        );
+
+        line.frustumCulled = false;
+        scene.add(line);
+
+        const measurementDiv = <HTMLDivElement>document.createElement('div');
+        measurementDiv.className = 'measurementLabel';
+        measurementDiv.innerHTML = '0.0m';
+        const measurementLabel = new CSS2DObject(measurementDiv);
+        measurementLabel.position.copy(intersects[0].point)
+        scene.add(measurementLabels[lineId]);
+        drawingLine = true;
+      } else {
+        const positions = line.geometry.attributes.position.array as Array<number>;
+        positions[3] = intersects[0].point.x;
+        positions[4] = intersects[0].point.y;
+        positions[5] = intersects[0].point.z;
+        line.geometry.attributes.position.needsUpdate = true;
+        lineId++;
+        drawingLine = false;
+      }
+    }
+  }
+}
+
 const stats = Stats();
 document.body.appendChild(stats.dom);
 
