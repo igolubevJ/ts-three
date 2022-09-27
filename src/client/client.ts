@@ -33,6 +33,14 @@ ceiling.rotateX(Math.PI / 2);
 ceiling.position.y = 3;
 scene.add(ceiling);
 
+const wall1 = new THREE.Mesh(
+  new THREE.PlaneGeometry(2, 2),
+  new THREE.MeshNormalMaterial({ side: THREE.DoubleSide })
+);
+wall1.position.x = 4;
+wall1.rotateY(-Math.PI / 2);
+scene.add(wall1);
+
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
