@@ -3,7 +3,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
 const scene = new THREE.Scene();
-scene.add(new THREE.AxesHelper(5));
 
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
 camera.position.z = 2;
@@ -54,6 +53,29 @@ const cube = new THREE.Mesh(
 );
 cube.position.set(-3, 0, 0);
 scene.add(cube);
+
+// crosshair
+const lineMaterial = new THREE.LineBasicMaterial({
+  color: 0x0000ff
+});
+const points: THREE.Vector3[] = [];
+points[0] = new THREE.Vector3(-0.1, 0, 0);
+points[1] = new THREE.Vector3(0.1, 0, 0);
+let lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+const xLine = new THREE.Line(lineGeometry, lineMaterial);
+scene.add(xLine);
+
+points[0] = new THREE.Vector3(0, -0.1, 0);
+points[1] = new THREE.Vector3(0, 0.1, 0);
+lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+const yLine = new THREE.Line(lineGeometry, lineMaterial);
+scene.add(yLine);
+
+points[0] = new THREE.Vector3(0, 0, -0.1);
+points[1] = new THREE.Vector3(0, 0, 0.1);
+lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+const zLine = new THREE.Line(lineGeometry, lineMaterial);
+scene.add(zLine);
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
