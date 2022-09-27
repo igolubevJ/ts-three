@@ -65,6 +65,32 @@ function onWindowResize() {
   render();
 }
 
+const raycaster = new THREE.Raycaster();
+let intersects: THREE.Intersection[];
+
+document.addEventListener('mousemove', onDocumentMouseMove, false);
+function onDocumentMouseMove(event: MouseEvent) {
+  const pointer = new THREE.Vector2();
+  pointer.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+  pointer.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  intersects = raycaster.intersectObjects(pickableObjects, false);
+
+  if (intersects.length > 0) {
+    intersectedObject = intersects[0].object;
+  } else {
+    intersectedObject = null;
+  }
+
+  pickableObjects.forEach((o: THREE.Mesh, i) => {
+    if (intersectedObject && intersectedObject.name === o.name) {
+      pickableObjects[i].material = hightlightedMaterial;
+    } else {
+      pickableObjects[i].material = originalMaterials[o.name];
+    }
+  });
+}
+
 const stats = Stats();
 document.body.appendChild(stats.dom);
 
