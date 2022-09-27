@@ -1,7 +1,8 @@
-import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import Stats from 'three/examples/jsm/libs/stats.module'
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import Stats from 'three/examples/jsm/libs/stats.module';
+import { TWEEN } from 'three/examples/jsm/libs/tween.module.min';
 
 const scene = new THREE.Scene();
 
@@ -65,7 +66,16 @@ function onDoubleClick(event: MouseEvent) {
   raycaster.setFromCamera(mouse, camera);
 
   const intersects = raycaster.intersectObjects(sceneMeshes, false);
-  if (intersects.length > 0) {}
+  if (intersects.length > 0) {
+    const p = intersects[0].point;
+    console.log(p);
+    controls.target.set(p.x, p.y, p.z);
+    new TWEEN.Tween(controls.target)
+      .to({ x: p.x, y: p.y, z: p.z }, 500)
+      // .delay(1000)
+      .easing(TWEEN.Easing.Cubic.Out)
+      .start();
+  }
 }
 
 const stats = Stats();
@@ -75,6 +85,8 @@ function animate() {
     requestAnimationFrame(animate);
 
     controls.update();
+
+    TWEEN.update();
 
     render();
 
