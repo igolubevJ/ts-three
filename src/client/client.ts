@@ -37,8 +37,25 @@ const hightlightedMaterial = new THREE.MeshBasicMaterial({
 const loader = new GLTFLoader();
 
 loader.load('models/simplescene.glb', (gltf) => {
+  gltf.scene.traverse((child) => {
+    if ((<THREE.Mesh>child).isMesh) {
+      const m = <THREE.Mesh>child;
+      switch(m.name) {
+        case 'Plane':
+          m.receiveShadow = true;
+          break;
+        case 'Sphere':
+          m.castShadow = true;
+          break;
+        default:
+          m.castShadow = true;
+          pickableObjects.push(m);
+          originalMaterials[m.name] = (<THREE.Mesh>m).material;
+      }
+    }
+  });
   scene.add(gltf.scene);
-})
+});
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
