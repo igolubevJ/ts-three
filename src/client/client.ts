@@ -3,6 +3,10 @@ import { AxesHelper } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import Stats from 'three/examples/jsm/libs/stats.module';
+import {
+  CSS2DRenderer,
+  CSS2DObject
+} from 'three/examples/jsm/renderers/CSS2DRenderer';
 
 const scene = new THREE.Scene();
 scene.add(new AxesHelper(5));
@@ -23,8 +27,17 @@ renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize(window.innerWidth, window.innerHeight);
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = '0px';
+labelRenderer.domElement.style.pointerEvents = 'none';
+document.body.appendChild(labelRenderer.domElement);
+
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
+
+const pickableObjects: THREE.Mesh[] = [];
 
 const loader = new GLTFLoader();
 
@@ -36,12 +49,10 @@ loader.load('models/simplescene.glb', (gltf) => {
         case 'Plane':
           m.receiveShadow = true;
           break;
-        case 'Sphere':
-          m.castShadow = true;
-          break;
         default:
           m.castShadow = true;
       }
+      pickableObjects.push(m);
     }
   });
   scene.add(gltf.scene);
