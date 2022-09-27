@@ -24,6 +24,10 @@ let arrowHelper = new THREE.ArrowHelper(
 );
 scene.add(arrowHelper);
 
+const material = new THREE.MeshNormalMaterial();
+
+const boxGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
@@ -67,6 +71,7 @@ function onWindowResize() {
   render();
 }
 
+renderer.domElement.addEventListener('dblclick', onDoubleClick, false);
 renderer.domElement.addEventListener('mousemove', onMouseMove, false);
 
 function onMouseMove(event: MouseEvent) {
@@ -85,6 +90,29 @@ function onMouseMove(event: MouseEvent) {
 
     arrowHelper.setDirection(n);
     arrowHelper.position.copy(intersects[0].point);
+  }
+}
+
+function onDoubleClick(event: MouseEvent) {
+  const mouse = new THREE.Vector2();
+  mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+  mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+
+  const intersects = raycaster.intersectObjects(sceneMeshes, false);
+
+  if (intersects.length > 0) {
+    const n = new THREE.Vector3();
+    n.copy((intersects[0].face as THREE.Face).normal);
+    n.transformDirection(intersects[0].object.matrixWorld);
+
+    const cube = new THREE.Mesh(boxGeometry, material);
+
+    cube.lookAt(n);
+    cube.position.copy(intersects[0].point);
+
+    scene.add(cube);
   }
 }
 
