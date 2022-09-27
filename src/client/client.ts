@@ -17,6 +17,14 @@ controls.enableDamping = true;
 
 const raycaster = new THREE.Raycaster();
 
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(10, 10),
+  new THREE.MeshNormalMaterial({ side: THREE.DoubleSide })
+);
+floor.rotateX(Math.PI / 2);
+floor.position.y = -1;
+scene.add(floor);
+
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
