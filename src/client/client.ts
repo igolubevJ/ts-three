@@ -31,6 +31,16 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.target.set(0, 1, 0);
 
+// const sceneMeshes: THREE.Mesh[] = [];
+
+const planeGeometry = new THREE.PlaneGeometry(25, 25);
+const texture = new THREE.TextureLoader().load('img/grid.png');
+const plane = new THREE.Mesh(planeGeometry, new THREE.MeshPhongMaterial({ map: texture }));
+plane.rotateX(-Math.PI / 2);
+// plane.receiveShadow = true;
+scene.add(plane);
+// sceneMeshes.push(plane);
+
 let mixer: THREE.AnimationMixer;
 let modelReady = false;
 
