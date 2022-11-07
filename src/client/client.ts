@@ -31,7 +31,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.target.set(0, 1, 0);
 
-// const sceneMeshes: THREE.Mesh[] = [];
+const sceneMeshes: THREE.Mesh[] = [];
 
 const planeGeometry = new THREE.PlaneGeometry(25, 25);
 const texture = new THREE.TextureLoader().load('img/grid.png');
@@ -39,25 +39,26 @@ const plane = new THREE.Mesh(planeGeometry, new THREE.MeshPhongMaterial({ map: t
 plane.rotateX(-Math.PI / 2);
 // plane.receiveShadow = true;
 scene.add(plane);
-// sceneMeshes.push(plane);
+sceneMeshes.push(plane);
 
 let mixer: THREE.AnimationMixer;
 let modelReady = false;
-
+let modelMesh: THREE.Object3D;
 const animationActions: THREE.AnimationAction[] = [];
 let activeAction: THREE.AnimationAction;
 let lastAction: THREE.AnimationAction;
 const gltfLoader = new GLTFLoader();
 
 gltfLoader.load('models/Kachujin/Kachujin.glb', (gltf) => {
-  scene.add(gltf.scene);
-
   mixer = new THREE.AnimationMixer(gltf.scene);
 
   const animationAction = mixer.clipAction((gltf as any).animations[0]);
   animationActions.push(animationAction);
   animationsFolder.add(animations, 'default');
   activeAction = animationActions[0];
+
+  scene.add(gltf.scene);
+  modelMesh = gltf.scene;
 
   // add animation from another file
   gltfLoader.load('models/Kachujin/Kachujin@kick.glb', (gltf) => {
@@ -93,6 +94,31 @@ gltfLoader.load('models/Kachujin/Kachujin.glb', (gltf) => {
 }, (error) => {
   console.log('Error Kachujin.glb:', error);
 });
+
+const raycaster = new THREE.Raycaster();
+
+renderer.domElement.addEventListener('dblclick', onDoubleClick, false);
+
+function onDoubleClick(event: MouseEvent) {
+  const mouse = {
+    x: (event.clientX / renderer.domElement.clientWidth) * 2 - 1,
+    y: -(event.clientY / renderer.domElement.clientHeight) * 2 + 1,
+  };
+
+  raycaster.setFromCamera(mouse, camera);
+
+  const intersects = raycaster.intersectObjects(sceneMeshes, false);
+
+  if (intersects.length > 0) {
+    const p = intersects[0].point;
+
+    new TWEEN.Tween(modelMesh.position).to({
+      x: p.x,
+      y: p.y,
+      z: p.z,
+    }, 1000).start();
+  }
+}
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
@@ -143,6 +169,8 @@ function animate() {
   if (modelReady) {
     mixer.update(clock.getDelta());
   }
+
+  TWEEN.update();
 
   render();
 
