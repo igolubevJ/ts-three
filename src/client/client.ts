@@ -8,6 +8,16 @@ import { TWEEN } from 'three/examples/jsm/libs/tween.module.min';
 const scene = new THREE.Scene();
 scene.add(new THREE.AxesHelper(5));
 
+const light1 = new THREE.PointLight();
+light1.position.set(2.5, 2.5, 2.5);
+
+scene.add(light1);
+
+const light2 = new THREE.PointLight();
+light2.position.set(-2.5, 5, 2.5);
+
+scene.add(light2);
+
 const camera = new THREE.PerspectiveCamera(
   75, window.innerWidth / window.innerHeight, 0.1, 1000
 );
