@@ -29,12 +29,17 @@ function onWindowResize() {
     render();
 }
 
+const stats = Stats();
+document.body.appendChild(stats.dom);
+
 function animate() {
   requestAnimationFrame(animate)
 
   controls.update();
 
   render();
+
+  stats.update();
 }
 
 function render() {
