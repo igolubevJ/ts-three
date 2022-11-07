@@ -72,6 +72,8 @@ gltfLoader.load('models/Kachujin/Kachujin.glb', (gltf) => {
     // add animation from another file
     gltfLoader.load('models/Kachujin/Kachujin@walking.glb', (gltf) => {
       console.log('Load walking');
+      (gltf as any).animations[0].tracks.shift();
+      
       const animationAction = mixer.clipAction(
         (gltf as any).animations[0]
       );
@@ -108,6 +110,8 @@ function onDoubleClick(event: MouseEvent) {
   raycaster.setFromCamera(mouse, camera);
 
   const intersects = raycaster.intersectObjects(sceneMeshes, false);
+
+  setAction(animationActions[2]);
 
   if (intersects.length > 0) {
     const p = intersects[0].point;
