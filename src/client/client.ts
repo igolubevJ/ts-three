@@ -42,13 +42,32 @@ const gltfLoader = new GLTFLoader();
 gltfLoader.load('models/Kachujin/Kachujin.glb', (gltf) => {
   scene.add(gltf.scene);
 
+  mixer = new THREE.AnimationMixer(gltf.scene);
+
+  const animationAction = mixer.clipAction((gltf as any).animations[0]);
+  animationActions.push(animationAction);
+  animationsFolder.add(animations, 'default');
+  activeAction = animationActions[0];
+
   // add animation from another file
   gltfLoader.load('models/Kachujin/Kachujin@kick.glb', (gltf) => {
     console.log('Load kick');
+    const animationAction = mixer.clipAction(
+      (gltf as any).animations[0]
+    );
+    animationActions.push(animationAction);
+    animationsFolder.add(animations, 'kick');
 
     // add animation from another file
     gltfLoader.load('models/Kachujin/Kachujin@walking.glb', (gltf) => {
       console.log('Load walking');
+      const animationAction = mixer.clipAction(
+        (gltf as any).animations[0]
+      );
+      animationActions.push(animationAction);
+      animationsFolder.add(animations, 'walk');
+
+      modelReady = true;
     });
   });
 });
@@ -64,10 +83,44 @@ function onWindowResize() {
 const stats = Stats();
 document.body.appendChild(stats.dom);
 
+const animations = {
+  default: function() {
+    setAction(animationActions[0]);
+  },
+  kick: function() {
+    setAction(animationActions[1]);
+  },
+  walk: function() {
+    setAction(animationActions[2]);
+  },
+};
+
+const setAction = (toAction: THREE.AnimationAction) => {
+  if (toAction != activeAction) {
+    lastAction = activeAction;
+    activeAction = toAction;
+    // lastAction.stop();
+    lastAction.fadeOut(0.2);
+    activeAction.reset();
+    activeAction.fadeIn(0.2);
+    activeAction.play();
+  }
+};
+
+const gui = new GUI();
+const animationsFolder = gui.addFolder('Animations');
+animationsFolder.open();
+
+const clock = new THREE.Clock();
+
 function animate() {
   requestAnimationFrame(animate)
 
   controls.update();
+
+  if (modelReady) {
+    mixer.update(clock.getDelta());
+  }
 
   render();
 
