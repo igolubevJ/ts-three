@@ -68,8 +68,20 @@ gltfLoader.load('models/Kachujin/Kachujin.glb', (gltf) => {
       animationsFolder.add(animations, 'walk');
 
       modelReady = true;
+    }, (xhr) => {
+      console.log((xhr.loaded / xhr.total) * 100 + "% loaded Kachujin@walking.glb")
+    }, (error) => {
+      console.log('Error Kachujin@walking.glb:', error);
     });
+  }, (xhr) => {
+    console.log((xhr.loaded / xhr.total) * 100 + "% loaded Kachujin@kick.glb")
+  }, (error) => {
+    console.log('Error Kachujin@kick.glb:', error);
   });
+}, (xhr) => {
+  console.log((xhr.loaded / xhr.total) * 100 + "% loaded Kachujin.glb")
+}, (error) => {
+  console.log('Error Kachujin.glb:', error);
 });
 
 window.addEventListener('resize', onWindowResize, false);
