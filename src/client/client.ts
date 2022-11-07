@@ -41,6 +41,16 @@ const gltfLoader = new GLTFLoader();
 
 gltfLoader.load('models/Kachujin/Kachujin.glb', (gltf) => {
   scene.add(gltf.scene);
+
+  // add animation from another file
+  gltfLoader.load('models/Kachujin/Kachujin@kick.glb', (gltf) => {
+    console.log('Load kick');
+
+    // add animation from another file
+    gltfLoader.load('models/Kachujin/Kachujin@walking.glb', (gltf) => {
+      console.log('Load walking');
+    });
+  });
 });
 
 window.addEventListener('resize', onWindowResize, false);
