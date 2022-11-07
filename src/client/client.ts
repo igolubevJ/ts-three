@@ -31,6 +31,18 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.target.set(0, 1, 0);
 
+let mixer: THREE.AnimationMixer;
+let modelReady = false;
+
+const animationActions: THREE.AnimationAction[] = [];
+let activeAction: THREE.AnimationAction;
+let lastAction: THREE.AnimationAction;
+const gltfLoader = new GLTFLoader();
+
+gltfLoader.load('models/Kachujin/Kachujin.glb', (gltf) => {
+  scene.add(gltf.scene);
+});
+
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
